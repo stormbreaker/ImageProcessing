@@ -4,7 +4,10 @@ local viz = require "visual"
 local il = require "il"
 local ourProcesses = require "pointprocess"
 
-imageMenu("Test", { {"Resize", ourProcesses.grayscale}})
+imageMenu("Test",
+  {{"Resize", ourProcesses.grayscale},
+   {"Negate", ourProcesses.negate}}
+  )
 
 
 
