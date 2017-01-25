@@ -1,5 +1,5 @@
 local function convertToGrayScale(img)
- return img
+  return img
 end
 
 local function negate(img)
@@ -18,7 +18,21 @@ local function posterize(img, numberOfLevels)
 end
 
 local function brightness(img, amount)
-  return img
+  local rows, columns = img.height, img.width
+
+  img = il.RGB2YIQ(img)
+
+  for row = 0, rows - 1 do
+    for col = 0, columns - 1 do
+      img:at(row, col).y = img:at(row, col).y + amount
+
+      if img:at(row, col).y > 255 then
+        img:at(row, col).y = 255
+      end
+    end
+  end
+
+  return img.YIQ2RGB(img)
 end
 
 local function contrast(img, startPoint, endPoint)
@@ -59,5 +73,6 @@ end
 return 
 {
   grayscale = convertToGrayScale,
-  negate = negate
+  negate = negate,
+  brightness = brightness
 }

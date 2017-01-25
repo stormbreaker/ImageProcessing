@@ -6,8 +6,10 @@ local ourProcesses = require "pointprocess"
 
 imageMenu("Test",
   {{"Resize", ourProcesses.grayscale},
-   {"Negate", ourProcesses.negate}}
-  )
+   {"Negate", ourProcesses.negate},
+   {"Brightness", ourProcesses.brightness, {{name = "Brightness level", type = "number", displaytype = "spin", default = 128, min = 0, max = 255}}}
+ }
+ )
 
 
 
