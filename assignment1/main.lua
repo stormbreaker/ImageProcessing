@@ -11,8 +11,6 @@ imageMenu("Test",
   {"Binary Threshold", ourProcesses.binaryThreshold, {{name = "threshold", type = "number", displaytype = "slider", default = 128, min = 0, max = 255}}}
 })
 
-
-
 imageMenu("Help",
   {
     { "Help", viz.imageMessage( "Help", "To process an image:\n 1. File -> Open to select an image to process\n2. Click different menu options to perform computations\n" ..

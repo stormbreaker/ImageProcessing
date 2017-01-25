@@ -18,7 +18,10 @@ local function convertToGrayScale(img)
 end
 
 local function negate(img)
-  return img
+  return img:mapPixels( function( r, g, b )
+      return 255 - r, 255 - g, 255 - b
+    end
+  )
 end
 
 local function binaryThreshold(img, threshold)
