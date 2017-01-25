@@ -1,5 +1,20 @@
+require "ip"
+local il = require "il"
+
 local function convertToGrayScale(img)
- return img
+  local rows, columns = img.height, img.width
+  
+  --img = il.RGB2YIQ(img)
+  local sum
+  for row = 0, rows-1 do
+    for column = 0, columns-1 do
+        sum = .3 * img:at(row, column).r + .59 * img:at(row, column).g + .11 * img:at(row, column).b
+        img:at(row, column).r = sum
+        img:at(row, column).g = sum
+        img:at(row, column).b = sum
+      end
+    end
+ return img --il.YIQ2RGB(img)
 end
 
 local function negate(img)
@@ -7,7 +22,21 @@ local function negate(img)
 end
 
 local function binaryThreshold(img, threshold)
-  return img
+  local rows, columns = img.height, img.width
+  
+  img = convertToGrayScale(img)
+  
+  img = il.RGB2YIQ(img)
+  for row = 0, rows-1 do
+    for column = 0, columns-1 do
+      if img:at(row, column).y >= threshold then
+        img:at(row, column).y = 255
+      elseif img:at(row, column).y < threshold then
+        img:at(row, column).y = 0
+      end
+    end
+  end
+  return il.YIQ2RGB(img)
 end
 
 local function posterize(img, numberOfLevels)
@@ -56,5 +85,6 @@ end
 return 
 {
   grayscale = convertToGrayScale,
-  negate = negate
+  negate = negate,
+  binaryThreshold = binaryThreshold
 }

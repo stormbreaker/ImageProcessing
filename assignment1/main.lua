@@ -4,7 +4,12 @@ local viz = require "visual"
 local il = require "il"
 local ourProcesses = require "pointprocess"
 
-imageMenu("Test", { {"Resize", ourProcesses.grayscale}})
+imageMenu("Test", 
+{ 
+  {"Grayscale", ourProcesses.grayscale},
+  {"Negate", ourProcesses.negate},
+  {"Binary Threshold", ourProcesses.binaryThreshold, {{name = "threshold", type = "number", displaytype = "slider", default = 128, min = 0, max = 255}}}
+})
 
 
 
