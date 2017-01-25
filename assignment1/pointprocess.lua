@@ -43,6 +43,14 @@ local function binaryThreshold(img, threshold)
 end
 
 local function posterize(img, numberOfLevels)
+  local rows, columns = img.height, img.width
+  
+  img = il.RGB2YIQ(img)
+  
+  for row = 0, rows-1 do
+    for column = 0, columns-1 do
+      if img:at(row, column)
+  
   return img
 end
 
