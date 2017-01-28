@@ -52,8 +52,6 @@ local function posterize(img, numberOfLevels)
   currentLevel = 0
   counter = 0
   
-  print("numberEachLevel", numberEachLevel)
-  
   lookUpTable = {}
   
   for index = 0, 255 do
@@ -68,10 +66,6 @@ local function posterize(img, numberOfLevels)
     lookUpTable[index] = currentLevel
   end
   
-  for index = 0, 255 do
-    print(lookUpTable[index])
-  end
-  
   img = il.RGB2YIQ(img)
   
   for row = 0, rows-1 do
@@ -82,9 +76,7 @@ local function posterize(img, numberOfLevels)
     end
   end
   
-  img = il.YIQ2RGB(img)
-  
-  return img
+  return il.YIQ2RGB(img)
 end
 
 local function brightness(img, amount)
@@ -94,11 +86,17 @@ local function brightness(img, amount)
 
   for row = 0, rows - 1 do
     for col = 0, columns - 1 do
-      img:at(row, col).y = img:at(row, col).y + amount
+      local pixel = img:at(row, col).y
+      
+      pixel = pixel + amount
 
-      if img:at(row, col).y >= 255 then
-        img:at(row, col).y = 255
+      if pixel > 255 then
+        pixel = 255
+      elseif pixel < 0 then
+        pixel = 0
       end
+      
+      img:at(row, col).y = pixel
     end
   end
 
@@ -106,7 +104,30 @@ local function brightness(img, amount)
 end
 
 local function contrast(img, startPoint, endPoint)
-  return img
+  local rows, columns = img.height, img.width
+  local slope = 255 / (endPoint - startPoint)
+  local intercept = -startPoint * slope
+  local table = {}
+  
+  for i = 0, 255 do
+    if i <= startPoint then
+      table[i] = 0
+    elseif i >= endPoint then
+      table[i] = 255
+    else
+      table[i] = slope * i + intercept
+    end
+  end
+  
+  img = il.RGB2YIQ(img)
+    
+  for row = 0, rows - 1 do
+    for col = 0, columns - 1 do
+      img:at(row, col).y = table[img:at(row, col).y];
+    end
+  end
+  
+  return il.YIQ2RGB(img)
 end
 
 local function gamma(img, gamma)
@@ -146,5 +167,6 @@ return
   negate = negate,
   brightness = brightness,
   binaryThreshold = binaryThreshold,
-  posterize = posterize
+  posterize = posterize,
+  contrast = contrast
 }
