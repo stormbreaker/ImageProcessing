@@ -149,11 +149,124 @@ local function dynamicRange(img)
   return img
 end
 
+local function avgGrayscale(img)
+  local rows, columns = img.height, img.width
+  
+  for row = 0, rows-1 do
+    for column = 0, columns-1 do
+      sum = img:at(row, column).r + img:at(row, column).g + img:at(row, column).b
+      img:at(row, column).r = sum/3
+      img:at(row, column).g = sum/3
+      img:at(row, column).b = sum/3
+    end
+  end
+  return img
+end
+
 local function discretePseudocolor(img)
+  local rows, columns = img.height, img.width
+  
+  lookUpTable ={}
+  
+  img = avgGrayscale(img)
+
+  for i = 0, 31 do
+    coordinates = {}
+    coordinates['red'] = 255
+    coordinates['green'] = 0
+    coordinates['blue'] = 0
+    lookUpTable[i] = coordinates
+  end
+  for i = 32, 63 do
+    coordinates = {}
+    coordinates['red'] = 0
+    coordinates['green'] = 255
+    coordinates['blue'] = 0
+    lookUpTable[i] = coordinates
+  end
+  for i = 64, 95 do
+    coordinates = {}
+    coordinates['red'] = 0
+    coordinates['green'] = 0
+    coordinates['blue'] = 255
+    lookUpTable[i] = coordinates
+  end
+  for i = 96, 127 do
+    coordinates = {}
+    coordinates['red'] = 0
+    coordinates['green'] = 255
+    coordinates['blue'] = 255
+    lookUpTable[i] = coordinates
+  end
+  for i = 128, 159 do
+    coordinates = {}
+    coordinates['red'] = 0
+    coordinates['green'] = 128
+    coordinates['blue'] = 255
+    lookUpTable[i] = coordinates
+  end
+  for i = 160, 191 do
+    coordinates = {}
+    coordinates['red'] = 255
+    coordinates['green'] = 0
+    coordinates['blue'] = 255
+    lookUpTable[i] = coordinates
+  end
+  for i = 192, 223 do
+    coordinates = {}
+    coordinates['red'] = 32
+    coordinates['green'] = 64
+    coordinates['blue'] = 128
+    lookUpTable[i] = coordinates
+  end
+  for i = 224, 255 do
+    coordinates = {}
+    coordinates['red'] = 255
+    coordinates['green'] = 255
+    coordinates['blue'] = 255
+    lookUpTable[i] = coordinates
+  end
+  
+  for row = 0, rows-1 do
+    for column = 0, columns-1 do
+      pixel = img:at(row, column)
+      img:at(row, column).r = lookUpTable[pixel.r]['red']
+      img:at(row, column).g = lookUpTable[pixel.g]['green']
+      img:at(row, column).b = lookUpTable[pixel.b]['blue']
+    end
+  end
+  
   return img
 end
 
 local function continuousPseudocolor(img)
+  local rows, columns = img.height, img.width
+  
+  lookUpTable ={}
+  
+  img = avgGrayscale(img)
+  
+  for i = 0, 255 do 
+    coordinates = {}
+    coordinates['red'] = i
+    coordinates['blue'] = 255 - i
+    if i < 128 then
+      coordinates['green'] = i
+    elseif i >= 128 then
+      coordinates['green'] = 255 - i
+    end
+    lookUpTable[i] = coordinates
+  end
+  
+  for row = 0, rows-1 do
+    for column = 0, columns-1 do
+      pixel = img:at(row, column)
+      img:at(row, column).r = lookUpTable[pixel.r]['red']
+      img:at(row, column).g = lookUpTable[pixel.g]['green']
+      img:at(row, column).b = lookUpTable[pixel.b]['blue']
+    end
+  end
+  
   return img
 end
 
@@ -245,5 +358,7 @@ return
   contrast = contrast,
   gamma = gamma,
   automaticContrastStretch = automaticContrastStretch,
-  modifiedContrastStretch = modifiedContrastStretch
+  modifiedContrastStretch = modifiedContrastStretch,
+  discretePseudocolor = discretePseudocolor,
+  continuousPseudocolor = continuousPseudocolor
 }
