@@ -1,5 +1,7 @@
 require "ip"
 local il = require "il"
+math = require "math"
+
 
 local function convertToGrayScale(img)
   local rows, columns = img.height, img.width
@@ -45,11 +47,42 @@ end
 local function posterize(img, numberOfLevels)
   local rows, columns = img.height, img.width
   
+  incrementValue = math.floor(256/(numberOfLevels - 1))
+  numberEachLevel = math.floor(256/numberOfLevels + .5)
+  currentLevel = 0
+  counter = 0
+  
+  print("numberEachLevel", numberEachLevel)
+  
+  lookUpTable = {}
+  
+  for index = 0, 255 do
+    if counter == numberEachLevel - 1 then
+      counter = 0
+      currentLevel = currentLevel + incrementValue
+      if currentLevel > 255 then
+        currentLevel = 255
+      end
+    end
+    counter = counter + 1
+    lookUpTable[index] = currentLevel
+  end
+  
+  for index = 0, 255 do
+    print(lookUpTable[index])
+  end
+  
   img = il.RGB2YIQ(img)
   
   for row = 0, rows-1 do
     for column = 0, columns-1 do
-      if img:at(row, column)
+      pixel = img:at(row, column).y
+      pixel = lookUpTable[pixel]
+      img:at(row, column).y = pixel
+    end
+  end
+  
+  img = il.YIQ2RGB(img)
   
   return img
 end
@@ -112,5 +145,6 @@ return
   grayscale = convertToGrayScale,
   negate = negate,
   brightness = brightness,
-  binaryThreshold = binaryThreshold
+  binaryThreshold = binaryThreshold,
+  posterize = posterize
 }

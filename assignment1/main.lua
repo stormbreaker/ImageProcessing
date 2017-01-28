@@ -5,11 +5,14 @@ local il = require "il"
 local ourProcesses = require "pointprocess"
 
 imageMenu("Test",
-  {{"Resize", ourProcesses.grayscale},
-   {"Negate", ourProcesses.negate},
-   {"Brightness", ourProcesses.brightness, {{name = "Brightness level", type = "number", displaytype = "spin", default = 128, min = 0, max = 255}}},
-   {"Binary Threshold", ourProcesses.binaryThreshold, {{name = "threshold", type = "number", displaytype = "slider", default = 128, min = 0, max = 255}}}
-})
+{
+  {"Resize", ourProcesses.grayscale},
+  {"Negate", ourProcesses.negate},
+  {"Brightness", ourProcesses.brightness, {{name = "Brightness level", type = "number", displaytype = "spin", default = 128, min = 0, max = 255}}},
+  {"Binary Threshold", ourProcesses.binaryThreshold, {{name = "threshold", type = "number", displaytype = "slider", default = 128, min = 0, max = 255}}},
+  {"Posterize", ourProcesses.posterize, {{name = "levels", type = "number", displaytype = "slider", default = 8, min = 0, max = 255}}}
+}
+)
 
 imageMenu("Help",
   {
