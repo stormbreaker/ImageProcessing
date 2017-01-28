@@ -131,7 +131,18 @@ local function contrast(img, startPoint, endPoint)
 end
 
 local function gamma(img, gamma)
-  return img
+  local rows, columns = img.height, img.width
+  local gammaCorrection = 1 / gamma
+  
+  img = il.RGB2YIQ(img)
+  
+  for row = 0, rows - 1 do
+    for col = 0, columns - 1 do
+      img:at(row, col).y = 255 * math.pow((img:at(row, col).y / 255), gammaCorrection);
+    end
+  end
+  
+  return il.YIQ2RGB(img)
 end
 
 local function dynamicRange(img)
@@ -168,5 +179,6 @@ return
   brightness = brightness,
   binaryThreshold = binaryThreshold,
   posterize = posterize,
-  contrast = contrast
+  contrast = contrast,
+  gamma = gamma
 }
