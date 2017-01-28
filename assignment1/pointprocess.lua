@@ -157,12 +157,75 @@ local function continuousPseudocolor(img)
   return img
 end
 
-local function automaticContrastStretch(img)
-  return img
+local function modifiedContrastStretch(img, darkPercent, lightPercent)
+  local rows, columns = img.height, img.width
+  local pixelCount = rows * columns
+  local histogram = {}
+  local max = 0
+  local min = 0
+  local intensity = 0
+  local darkCount = (darkPercent / 100) * pixelCount
+  local lightCount = (lightPercent / 100) * pixelCount
+  
+  img = il.RGB2YIQ(img)
+  
+  for i = 0, 255 do
+    histogram[i] = 0
+  end
+  
+  for row = 0, rows - 1 do
+    for col = 0, columns - 1 do
+      intensity = img:at(row, col).y
+      
+      histogram[intensity] = histogram[intensity] + 1
+      
+      if histogram[max] < histogram[intensity] then
+        max = intensity
+      end
+      
+      if histogram[min] > histogram[intensity] then
+        min = intensity
+      end
+    end
+  end
+  
+  local i = 0
+  local count = 0
+  
+  for i = 0, 255 do
+    count = count + histogram[i]
+    
+    if count > darkCount then
+      min = i
+      break
+    end
+  end
+  
+  for i = 255, 0, -1 do
+    count = count + histogram[i]
+    
+    if count > lightCount then
+      max = i
+      break
+    end
+  end
+  
+  print("Max = " .. max)
+  print("Min = " .. min)
+  
+  for row = 0, rows - 1 do
+    for col = 0, columns - 1 do
+      img:at(row, col).y = (255 / (max - min)) * (img:at(row, col).y - min)
+    end
+  end
+  
+  --img = il.showHistogram(il.YIQ2RGB(img))
+  
+  return il.YIQ2RGB(img)
 end
 
-local function modifiedContrastStretch(img, darkPercent, lightPercent)
-  return img
+local function automaticContrastStretch(img)
+  return modifiedContrastStretch(img, 0, 0)
 end
 
 local function histogramDisplay(img)
@@ -180,5 +243,7 @@ return
   binaryThreshold = binaryThreshold,
   posterize = posterize,
   contrast = contrast,
-  gamma = gamma
+  gamma = gamma,
+  automaticContrastStretch = automaticContrastStretch,
+  modifiedContrastStretch = modifiedContrastStretch
 }

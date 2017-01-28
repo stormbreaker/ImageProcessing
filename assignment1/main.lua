@@ -13,7 +13,10 @@ imageMenu("Test",
   {"Posterize", ourProcesses.posterize, {{name = "levels", type = "number", displaytype = "slider", default = 8, min = 0, max = 255}}},
   {"Contrast", ourProcesses.contrast, {{name = "endpoint1", type = "number", displaytype = "slider", default = 0, min = 0, max = 255},
                                        {name = "endpoint2", type = "number", displaytype = "slider", default = 255, min = 0, max = 255}}},
-  {"Gamma", ourProcesses.gamma, {{name = "gamma", type = "number", displaytype = "textbox"}}}
+  {"Gamma", ourProcesses.gamma, {{name = "Gamma", type = "number", displaytype = "textbox"}}},
+  {"Automatic Contrast Stretch", ourProcesses.automaticContrastStretch},
+  {"Modified Contrast Stretch", ourProcesses.modifiedContrastStretch, {{name = "Dark Percent", type = "number", displaytype = "slider", default = 0, min = 0, max = 100},
+                                       {name = "Light Percent", type = "number", displaytype = "slider", default = 0, min = 0, max = 100}}}
 })
 
 imageMenu("Help",
