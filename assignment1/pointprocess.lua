@@ -42,17 +42,17 @@ local function binaryThreshold(img, threshold)
   return il.YIQ2RGB(img)
 end
 
-local function posterize(img, numberOfLevels)
-  local rows, columns = img.height, img.width
+--local function posterize(img, numberOfLevels)
+--  local rows, columns = img.height, img.width
   
-  img = il.RGB2YIQ(img)
+--  img = il.RGB2YIQ(img)
   
-  for row = 0, rows-1 do
-    for column = 0, columns-1 do
-      if img:at(row, column)
+ -- for row = 0, rows-1 do
+ --   for column = 0, columns-1 do
+ --     if img:at(row, column)
   
-  return img
-end
+  --return img
+--end
 
 local function brightness(img, amount)
   local rows, columns = img.height, img.width
@@ -61,11 +61,17 @@ local function brightness(img, amount)
 
   for row = 0, rows - 1 do
     for col = 0, columns - 1 do
-      img:at(row, col).y = img:at(row, col).y + amount
+      local pixel = img:at(row, col).y
+      
+      pixel = pixel + amount
 
-      if img:at(row, col).y >= 255 then
-        img:at(row, col).y = 255
+      if pixel > 255 then
+        pixel = 255
+      elseif pixel < 0 then
+        pixel = 0
       end
+      
+      img:at(row, col).y = pixel
     end
   end
 
