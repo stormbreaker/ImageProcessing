@@ -18,7 +18,8 @@ imageMenu("Our Processes",
   {"Gamma", ourProcesses.gamma, {{name = "Gamma", type = "number", displaytype = "textbox"}}},
   {"Automatic Contrast Stretch", ourProcesses.automaticContrastStretch},
   {"Modified Contrast Stretch", ourProcesses.modifiedContrastStretch, {{name = "Dark Percent", type = "number", displaytype = "slider", default = 0, min = 0, max = 100},
-  {name = "Light Percent", type = "number", displaytype = "slider", default = 0, min = 0, max = 100}}}
+  {name = "Light Percent", type = "number", displaytype = "slider", default = 0, min = 0, max = 100}}},
+  {"Bitplane Slice", ourProcesses.bitSlice, {{name = "plane", type = "number", displaytype = "spin", default = 7, min = 0, max = 7}}},
 })
 
 imageMenu("Our Histogram",

@@ -1,6 +1,7 @@
 require "ip"
 local il = require "il"
-math = require "math"
+local math = require "math"
+local bit = require "bit"
 
 
 local function convertToGrayScale(img)
@@ -352,6 +353,52 @@ local function histogramDisplayRGB(img)
 end
 
 local function sliceBitPlane(img, plane)
+  
+  local rows, columns = img.height, img.width
+  
+  mask = 1
+  
+  if plane == 1 then
+    mask = 2
+  elseif plane == 2 then
+    mask = 4
+  elseif plane == 3 then
+    mask = 8
+  elseif plane == 4 then
+    mask = 16
+  elseif plane == 5 then
+    mask = 32
+  elseif plane == 6 then
+    mask = 64
+  elseif plane == 7 then
+    mask = 128
+  end
+    
+  for row = 0, rows-1 do
+    for column = 0, columns-1 do
+      pixel = img:at(row, column)
+      if bit.rshift(bit.band(mask, pixel.r), plane) == 1 then
+        pixel.r = 255
+      elseif bit.rshift(bit.band(mask, pixel.r), plane) == 0 then
+        pixel.r = 0
+      end
+      if bit.rshift(bit.band(mask, pixel.g), plane) == 1 then
+        pixel.g = 255
+      elseif bit.rshift(bit.band(mask, pixel.g), plane) == 0 then
+        pixel.g = 0
+      end
+      if bit.rshift(bit.band(mask, pixel.b), plane) == 1 then
+        pixel.b = 255
+      elseif bit.rshift(bit.band(mask, pixel.g), plane) == 0 then
+        pixel.b = 0
+      end
+      
+      img:at(row, column).r = pixel.r
+      img:at(row, column).g = pixel.g
+      img:at(row, column).b = pixel.b
+    end
+  end
+  
   return img
 end
 
@@ -369,5 +416,6 @@ return
   discretePseudocolor = discretePseudocolor,
   continuousPseudocolor = continuousPseudocolor,
   intensityHistogram = histogramDisplay,
-  rgbHistogram = histogramDisplayRGB
+  rgbHistogram = histogramDisplayRGB,
+  bitSlice = sliceBitPlane
 }
