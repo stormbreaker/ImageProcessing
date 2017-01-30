@@ -4,7 +4,7 @@ local viz = require "visual"
 local il = require "il"
 local ourProcesses = require "pointprocess"
 
-imageMenu("Test",
+imageMenu("Our Processes",
 {
   {"Grayscale", ourProcesses.grayscale},
   {"Pseudocolor", ourProcesses.discretePseudocolor},
@@ -18,7 +18,13 @@ imageMenu("Test",
   {"Gamma", ourProcesses.gamma, {{name = "Gamma", type = "number", displaytype = "textbox"}}},
   {"Automatic Contrast Stretch", ourProcesses.automaticContrastStretch},
   {"Modified Contrast Stretch", ourProcesses.modifiedContrastStretch, {{name = "Dark Percent", type = "number", displaytype = "slider", default = 0, min = 0, max = 100},
-                                       {name = "Light Percent", type = "number", displaytype = "slider", default = 0, min = 0, max = 100}}}
+  {name = "Light Percent", type = "number", displaytype = "slider", default = 0, min = 0, max = 100}}}
+})
+
+imageMenu("Our Histogram",
+{
+  {"Intensity Histogram", ourProcesses.intensityHistogram},
+  {"RGB Histogram", ourProcesses.rgbHistogram}
 })
 
 imageMenu("Help",

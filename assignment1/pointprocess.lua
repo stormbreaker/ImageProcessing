@@ -342,6 +342,13 @@ local function automaticContrastStretch(img)
 end
 
 local function histogramDisplay(img)
+  img = il.showHistogram(il.YIQ2RGB(img))
+  return img
+end
+
+local function histogramDisplayRGB(img)
+  img = il.showHistogramRGB(img)
+  return img
 end
 
 local function sliceBitPlane(img, plane)
@@ -360,5 +367,7 @@ return
   automaticContrastStretch = automaticContrastStretch,
   modifiedContrastStretch = modifiedContrastStretch,
   discretePseudocolor = discretePseudocolor,
-  continuousPseudocolor = continuousPseudocolor
+  continuousPseudocolor = continuousPseudocolor,
+  intensityHistogram = histogramDisplay,
+  rgbHistogram = histogramDisplayRGB
 }
