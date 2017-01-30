@@ -343,7 +343,7 @@ local function automaticContrastStretch(img)
 end
 
 local function histogramDisplay(img)
-  img = il.showHistogram(il.YIQ2RGB(img))
+  img = il.showHistogram(img)
   return img
 end
 
