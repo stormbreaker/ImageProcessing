@@ -271,6 +271,30 @@ local function continuousPseudocolor(img)
   return img
 end
 
+local function benModifiedContrastStretch(img, darkPrecent, lightPercent)
+  local rows, columns = img.height, img.width
+  local pixelCount = rows * columns
+  local histogram = {}
+  local max = 0
+  local min = 256
+  
+  local intensity = 0
+  
+  local darkCount = (darkPrecent /100) * pixelCount
+  local lightCount = (lightPercent /100) * pixelCount
+  
+  img = il.RGB2YIQ(img)
+  
+  for i = 0, 255 do
+    histogram[i] = 0
+  end
+  
+  
+  
+  return img
+end
+
+
 local function modifiedContrastStretch(img, darkPercent, lightPercent)
   local rows, columns = img.height, img.width
   local pixelCount = rows * columns
