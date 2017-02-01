@@ -278,10 +278,12 @@ local function benModifiedContrastStretch(img, darkPrecent, lightPercent)
   local max = 0
   local min = 256
   
+  local count = 0
+  
   local intensity = 0
   
-  local darkCount = (darkPrecent /100) * pixelCount
-  local lightCount = (lightPercent /100) * pixelCount
+  local darkCountToIgnore = (darkPrecent /100) * pixelCount
+  local lightCountToIgnore = (lightPercent /100) * pixelCount
   
   img = il.RGB2YIQ(img)
   
@@ -289,9 +291,40 @@ local function benModifiedContrastStretch(img, darkPrecent, lightPercent)
     histogram[i] = 0
   end
   
+  for row = 0, rows - 1 do
+    for col = 0, columns - 1 do
+      intensity = img:at(row, col).y
+      histogram[intensity] = histogram[intensity] + 1
+    end
+  end
   
+  for i = 0, 255 do
+    count = count + histogram[i]
+    
+    if count >= darkCountToIgnore then
+      min = i
+      break
+    end
+  end
   
-  return img
+  count = 0
+  
+  for i = 255, 0, -1 do
+    count = count + histogram[i]
+    
+    if count >= lightCountToIgnore then
+      max = i
+      break
+    end
+  end
+  
+  for row = 0, rows - 1 do
+    for col = 0, columns - 1 do
+      img:at(row, col).y = (255 / (max - min)) * (img:at(row, col).y - min)
+    end
+  end
+  
+  return il.YIQ2RGB(img)
 end
 
 
@@ -317,11 +350,11 @@ local function modifiedContrastStretch(img, darkPercent, lightPercent)
       
       histogram[intensity] = histogram[intensity] + 1
       
-      if histogram[max] < histogram[intensity] then
+      if histogram[max] < histogram[intensity] then --why?
         max = intensity
       end
       
-      if histogram[min] > histogram[intensity] then
+      if histogram[min] > histogram[intensity] then --why?
         min = intensity
       end
     end
@@ -360,6 +393,10 @@ local function modifiedContrastStretch(img, darkPercent, lightPercent)
   --img = il.showHistogram(il.YIQ2RGB(img))
   
   return il.YIQ2RGB(img)
+end
+
+local function benAutoContrastStretch(img)
+  return benModifiedContrastStretch(img, 0, 0)
 end
 
 local function automaticContrastStretch(img)
@@ -441,5 +478,6 @@ return
   continuousPseudocolor = continuousPseudocolor,
   intensityHistogram = histogramDisplay,
   rgbHistogram = histogramDisplayRGB,
-  bitSlice = sliceBitPlane
+  bitSlice = sliceBitPlane,
+  autoStretch = benAutoContrastStretch
 }
