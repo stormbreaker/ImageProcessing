@@ -350,13 +350,6 @@ local function modifiedContrastStretch(img, darkPercent, lightPercent)
       
       histogram[intensity] = histogram[intensity] + 1
       
-      if histogram[max] < histogram[intensity] then --why?
-        max = intensity
-      end
-      
-      if histogram[min] > histogram[intensity] then --why?
-        min = intensity
-      end
     end
   end
   
@@ -366,7 +359,7 @@ local function modifiedContrastStretch(img, darkPercent, lightPercent)
   for i = 0, 255 do
     count = count + histogram[i]
     
-    if count > darkCount then
+    if count >= darkCount then
       min = i
       break
     end
@@ -375,10 +368,14 @@ local function modifiedContrastStretch(img, darkPercent, lightPercent)
   for i = 255, 0, -1 do
     count = count + histogram[i]
     
-    if count > lightCount then
+    if count >= lightCount then
       max = i
       break
     end
+  end
+  
+  if min > max then
+    max, min = min, max
   end
   
   print("Max = " .. max)
@@ -386,7 +383,7 @@ local function modifiedContrastStretch(img, darkPercent, lightPercent)
   
   for row = 0, rows - 1 do
     for col = 0, columns - 1 do
-      img:at(row, col).y = (255 / (max - min)) * (img:at(row, col).y - min)
+      img:at(row, col).y = math.floor((255 / (max - min)) * (img:at(row, col).y - min))
     end
   end
   
