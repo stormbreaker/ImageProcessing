@@ -332,8 +332,10 @@ local function modifiedContrastStretch(img, darkPercent, lightPercent)
   local rows, columns = img.height, img.width
   local pixelCount = rows * columns
   local histogram = {}
+  local i = 0
   local max = 0
   local min = 0
+  local count = 0
   local intensity = 0
   local darkCount = (darkPercent / 100) * pixelCount
   local lightCount = (lightPercent / 100) * pixelCount
@@ -349,12 +351,8 @@ local function modifiedContrastStretch(img, darkPercent, lightPercent)
       intensity = img:at(row, col).y
       
       histogram[intensity] = histogram[intensity] + 1
-      
     end
   end
-  
-  local i = 0
-  local count = 0
   
   for i = 0, 255 do
     count = count + histogram[i]
@@ -387,8 +385,6 @@ local function modifiedContrastStretch(img, darkPercent, lightPercent)
     end
   end
   
-  --img = il.showHistogram(il.YIQ2RGB(img))
-  
   return il.YIQ2RGB(img)
 end
 
@@ -401,13 +397,11 @@ local function automaticContrastStretch(img)
 end
 
 local function histogramDisplay(img)
-  img = il.showHistogram(img)
-  return img
+  return il.showHistogram(img)
 end
 
 local function histogramDisplayRGB(img)
-  img = il.showHistogramRGB(img)
-  return img
+  return il.showHistogramRGB(img)
 end
 
 local function sliceBitPlane(img, plane)
