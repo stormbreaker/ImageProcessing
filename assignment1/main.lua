@@ -27,7 +27,8 @@ imageMenu("Our Processes",
 imageMenu("Our Histogram",
 {
   {"Intensity Histogram", ourProcesses.intensityHistogram},
-  {"RGB Histogram", ourProcesses.rgbHistogram}
+  {"RGB Histogram", ourProcesses.rgbHistogram},
+  {"Histogram Equalization", ourProcesses.equalize}
 })
 
 imageMenu("Help",

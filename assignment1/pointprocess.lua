@@ -495,6 +495,50 @@ local function solarization(img, threshold)
   return img
 end
 
+local function histogramEqualize(img)
+  local rows, columns = img.height, img.width
+  numberOfPixels = rows * columns
+  
+  local min, max = 256, 0
+  
+  img = il.RGB2YIQ(img)
+  
+  histogram = {}
+  
+  for i = 0, 255 do
+    histogram[i] = 0
+  end
+  
+  for row = 0, rows - 1 do
+    for col = 0, columns - 1 do
+      intensity = img:at(row, col).y
+      histogram[intensity] = histogram[intensity] + 1
+    end
+  end
+  
+  local lookUpTable = {}
+  
+  local sum = 0
+  
+  for i = 0, 255 do
+    sum = 0
+    for j = 0, i do
+      sum = sum + (histogram[j] / numberOfPixels)
+    end
+    print(sum)
+    lookUpTable[i] = math.floor(sum * 255)
+  end
+  
+  for row = 0, rows - 1 do
+    for col = 0, columns - 1 do
+      pixelIntensity = img:at(row, col).y
+      img:at(row, col).y =  lookUpTable[pixelIntensity]
+    end
+  end
+  
+  return il.YIQ2RGB(img)
+end
+
 return 
 {
   grayscale = convertToGrayScale,
@@ -513,5 +557,6 @@ return
   bitSlice = sliceBitPlane,
   autoStretch = benAutoContrastStretch,
   logCompress = compressDynamicRange,
-  solarization = solarization
+  solarization = solarization,
+  equalize = histogramEqualize
 }
