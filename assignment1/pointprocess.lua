@@ -133,13 +133,12 @@ end
 
 local function gamma(img, gamma)
   local rows, columns = img.height, img.width
-  local gammaCorrection = 1 / gamma
   
   img = il.RGB2YIQ(img)
   
   for row = 0, rows - 1 do
     for col = 0, columns - 1 do
-      img:at(row, col).y = 255 * math.pow((img:at(row, col).y / 255), gammaCorrection);
+      img:at(row, col).y = 255 * math.pow((img:at(row, col).y / 255), gamma);
     end
   end
   
