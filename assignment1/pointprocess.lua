@@ -381,7 +381,7 @@ local function modifiedContrastStretch(img, darkPercent, lightPercent)
   
   for row = 0, rows - 1 do
     for col = 0, columns - 1 do
-      img:at(row, col).y = math.floor((255 / (max - min)) * (img:at(row, col).y - min))
+      img:at(row, col).y = math.floor((255 / (max - min))) * (img:at(row, col).y - min)
     end
   end
   
@@ -454,6 +454,20 @@ local function sliceBitPlane(img, plane)
   return img
 end
 
+local function compressDynamicRange(img)
+  local rows, columns = img.height, img.width
+  
+  img = il.RGB2YIQ(img)
+  
+  for row = 0, rows - 1 do
+    for col = 0, columns - 1 do
+      img:at(row, col).y =  255/math.log(256) * math.log(1 + img:at(row, col).y);
+    end
+  end
+  
+  return il.YIQ2RGB(img)
+end
+
 return 
 {
   grayscale = convertToGrayScale,
@@ -470,5 +484,6 @@ return
   intensityHistogram = histogramDisplay,
   rgbHistogram = histogramDisplayRGB,
   bitSlice = sliceBitPlane,
-  autoStretch = benAutoContrastStretch
+  autoStretch = benAutoContrastStretch,
+  logCompress = compressDynamicRange
 }
