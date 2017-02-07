@@ -133,13 +133,12 @@ end
 
 local function gamma(img, gamma)
   local rows, columns = img.height, img.width
-  local gammaCorrection = 1 / gamma
   
   img = il.RGB2YIQ(img)
   
   for row = 0, rows - 1 do
     for col = 0, columns - 1 do
-      img:at(row, col).y = 255 * math.pow((img:at(row, col).y / 255), gammaCorrection);
+      img:at(row, col).y = 255 * math.pow((img:at(row, col).y / 255), gamma);
     end
   end
   
@@ -376,12 +375,18 @@ local function modifiedContrastStretch(img, darkPercent, lightPercent)
     max, min = min, max
   end
   
-  print("Max = " .. max)
-  print("Min = " .. min)
-  
   for row = 0, rows - 1 do
     for col = 0, columns - 1 do
-      img:at(row, col).y = math.floor((255 / (max - min))) * (img:at(row, col).y - min)
+
+      local pixVal = math.floor((255 / (max - min)) * (img:at(row, col).y - min))
+      
+      if pixVal > 255 then
+        pixVal = 255
+      elseif pixVal < 0 then
+        pixVal = 0
+      end
+      
+      img:at(row, col).y = pixVal
     end
   end
   
@@ -393,7 +398,7 @@ local function benAutoContrastStretch(img)
 end
 
 local function automaticContrastStretch(img)
-  return modifiedContrastStretch(img, 0, 0)
+  return modifiedContrastStretch(img, 5, 5)
 end
 
 local function histogramDisplay(img)
