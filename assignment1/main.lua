@@ -21,7 +21,7 @@ imageMenu("Our Processes",
   {"Modified Contrast Stretch", ourProcesses.modifiedContrastStretch, {{name = "Dark Percent", type = "number", displaytype = "slider", default = 0, min = 0, max = 100},
   {name = "Light Percent", type = "number", displaytype = "slider", default = 0, min = 0, max = 100}}},
   {"Bitplane Slice", ourProcesses.bitSlice, {{name = "plane", type = "number", displaytype = "spin", default = 7, min = 0, max = 7}}},
-  {"Ben Auto Stretch", ourProcesses.autoStretch}
+  {"Solarization", ourProcesses.solarization, {{name = "solarization", type = "number", displaytype = "spin", default = 255, min = 0, max = 255}}},
 })
 
 imageMenu("Our Histogram",

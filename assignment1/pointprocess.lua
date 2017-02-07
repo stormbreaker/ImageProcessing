@@ -473,6 +473,28 @@ local function compressDynamicRange(img)
   return il.YIQ2RGB(img)
 end
 
+local function solarization(img, threshold)
+  local rows, columns = img.height, img.width
+  
+  for row = 0, rows - 1 do
+    for col = 0, columns - 1 do
+      if img:at(row, col).r <= threshold then
+        img:at(row, col).r = 255-img:at(row, col).r
+      end
+      
+      if img:at(row, col).g <= threshold then
+        img:at(row, col).g = 255-img:at(row, col).g
+      end
+      
+      if img:at(row, col).b <= threshold then
+        img:at(row, col).b = 255-img:at(row, col).b
+      end
+    end
+  end
+  
+  return img
+end
+
 return 
 {
   grayscale = convertToGrayScale,
@@ -490,5 +512,6 @@ return
   rgbHistogram = histogramDisplayRGB,
   bitSlice = sliceBitPlane,
   autoStretch = benAutoContrastStretch,
-  logCompress = compressDynamicRange
+  logCompress = compressDynamicRange,
+  solarization = solarization
 }
