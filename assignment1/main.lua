@@ -33,7 +33,7 @@ imageMenu("Help",
   {
     { "Help", viz.imageMessage( "Help", "To process an image:\n 1. File -> Open to select an image to process\n2. Click different menu options to perform computations\n" ..
         "3. File-> Save if you desire to save to a file") },
-    { "About", viz.imageMessage( "CSC 442 Assignment 1", "Authors: Benjamin Kaiser and Taylor Doell\nClass: CSC442/542 Digital Image Processing\nDate: Spring 2017" ) },
+    { "About", viz.imageMessage( "CSC 442 Assignment 1", "Authors: Benjamin Kaiser and Taylor Doell\nGUI:  Dr. Weiss and Alex Iverson\nClass: CSC442/542 Digital Image Processing\nDate: Spring 2017" ) },
   }
 )
 
