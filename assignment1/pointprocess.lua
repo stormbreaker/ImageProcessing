@@ -495,9 +495,10 @@ local function solarization(img, threshold)
   return img
 end
 
-local function histogramEqualize(img)
+local function histogramEqualize(img, percent)
   local rows, columns = img.height, img.width
-  numberOfPixels = rows * columns
+  numberOfPixels = (rows * columns)
+  clipLevel = math.floor(numberOfPixels * percent)
   
   local min, max = 256, 0
   
@@ -513,6 +514,9 @@ local function histogramEqualize(img)
     for col = 0, columns - 1 do
       intensity = img:at(row, col).y
       histogram[intensity] = histogram[intensity] + 1
+      if histogram[intensity] > clipLevel then
+        histogram[intensity] = clipLevel
+      end
     end
   end
   
@@ -539,6 +543,10 @@ local function histogramEqualize(img)
   return il.YIQ2RGB(img)
 end
 
+local function histogramEqualizeAuto(img)
+  return histogramEqualize(img, 1)
+end
+
 return 
 {
   grayscale = convertToGrayScale,
@@ -558,5 +566,6 @@ return
   autoStretch = benAutoContrastStretch,
   logCompress = compressDynamicRange,
   solarization = solarization,
-  equalize = histogramEqualize
+  equalize = histogramEqualizeAuto,
+  equalizeClip = histogramEqualize
 }

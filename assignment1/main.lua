@@ -28,7 +28,8 @@ imageMenu("Our Histogram",
 {
   {"Intensity Histogram", ourProcesses.intensityHistogram},
   {"RGB Histogram", ourProcesses.rgbHistogram},
-  {"Histogram Equalization", ourProcesses.equalize}
+  {"Histogram Equalization", ourProcesses.equalize},
+  {"Histogram Equalize with Clipping", ourProcesses.equalizeClip, {{name = "Percent", type = "number", displaytype = "textbox"}}}
 })
 
 imageMenu("Help",
