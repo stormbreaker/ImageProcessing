@@ -498,7 +498,7 @@ end
 local function histogramEqualize(img, percent)
   local rows, columns = img.height, img.width
   numberOfPixels = (rows * columns)
-  clipLevel = math.floor(numberOfPixels * percent)
+  clipLevel = math.floor(numberOfPixels * percent/100)
   
   local min, max = 256, 0
   
@@ -515,6 +515,9 @@ local function histogramEqualize(img, percent)
       intensity = img:at(row, col).y
       histogram[intensity] = histogram[intensity] + 1
       if histogram[intensity] > clipLevel then
+        local difference = histogram[intensity] - clipLevel
+        numberOfPixels = numberOfPixels - difference
+        print(numberOfPixels)
         histogram[intensity] = clipLevel
       end
     end
@@ -544,7 +547,7 @@ local function histogramEqualize(img, percent)
 end
 
 local function histogramEqualizeAuto(img)
-  return histogramEqualize(img, 1)
+  return histogramEqualize(img, 100)
 end
 
 return 
