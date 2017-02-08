@@ -48,12 +48,12 @@ end
 local function posterize(img, numberOfLevels)
   local rows, columns = img.height, img.width
   
-  incrementValue = math.floor(256/(numberOfLevels - 1))
-  numberEachLevel = math.floor(256/numberOfLevels + .5)
-  currentLevel = 0
-  counter = 0
+  local incrementValue = math.floor(256/(numberOfLevels - 1))
+  local numberEachLevel = math.floor(256/numberOfLevels + .5)
+  local currentLevel = 0
+  local counter = 0
   
-  lookUpTable = {}
+  local lookUpTable = {}
   
   for index = 0, 255 do
     if counter == numberEachLevel - 1 then
@@ -71,7 +71,7 @@ local function posterize(img, numberOfLevels)
   
   for row = 0, rows-1 do
     for column = 0, columns-1 do
-      pixel = img:at(row, column).y
+      local pixel = img:at(row, column).y
       pixel = lookUpTable[pixel]
       img:at(row, column).y = pixel
     end
@@ -145,16 +145,12 @@ local function gamma(img, gamma)
   return il.YIQ2RGB(img)
 end
 
-local function dynamicRange(img)
-  return img
-end
-
 local function avgGrayscale(img)
   local rows, columns = img.height, img.width
   
   for row = 0, rows-1 do
     for column = 0, columns-1 do
-      sum = img:at(row, column).r + img:at(row, column).g + img:at(row, column).b
+      local sum = img:at(row, column).r + img:at(row, column).g + img:at(row, column).b
       img:at(row, column).r = sum/3
       img:at(row, column).g = sum/3
       img:at(row, column).b = sum/3
@@ -166,9 +162,11 @@ end
 local function discretePseudocolor(img)
   local rows, columns = img.height, img.width
   
-  lookUpTable ={}
+  local lookUpTable ={}
   
   img = avgGrayscale(img)
+
+  local coordinates = {}
 
   for i = 0, 31 do
     coordinates = {}
@@ -229,7 +227,7 @@ local function discretePseudocolor(img)
   
   for row = 0, rows-1 do
     for column = 0, columns-1 do
-      pixel = img:at(row, column)
+      local pixel = img:at(row, column)
       img:at(row, column).r = lookUpTable[pixel.r]['red']
       img:at(row, column).g = lookUpTable[pixel.g]['green']
       img:at(row, column).b = lookUpTable[pixel.b]['blue']
@@ -242,7 +240,8 @@ end
 local function continuousPseudocolor(img)
   local rows, columns = img.height, img.width
   
-  lookUpTable ={}
+  local lookUpTable ={}
+  local coordinates = {}
   
   img = avgGrayscale(img)
   
@@ -260,7 +259,7 @@ local function continuousPseudocolor(img)
   
   for row = 0, rows-1 do
     for column = 0, columns-1 do
-      pixel = img:at(row, column)
+      local pixel = img:at(row, column)
       img:at(row, column).r = lookUpTable[pixel.r]['red']
       img:at(row, column).g = lookUpTable[pixel.g]['green']
       img:at(row, column).b = lookUpTable[pixel.b]['blue']
@@ -413,7 +412,7 @@ local function sliceBitPlane(img, plane)
   
   local rows, columns = img.height, img.width
   
-  mask = 1
+  local mask = 1
   
   if plane == 1 then
     mask = 2
@@ -433,7 +432,7 @@ local function sliceBitPlane(img, plane)
     
   for row = 0, rows-1 do
     for column = 0, columns-1 do
-      pixel = img:at(row, column)
+      local pixel = img:at(row, column)
       if bit.rshift(bit.band(mask, pixel.r), plane) == 1 then
         pixel.r = 255
       elseif bit.rshift(bit.band(mask, pixel.r), plane) == 0 then
@@ -497,14 +496,14 @@ end
 
 local function histogramEqualize(img, percent)
   local rows, columns = img.height, img.width
-  numberOfPixels = (rows * columns)
-  clipLevel = math.floor(numberOfPixels * percent/100)
+  local numberOfPixels = (rows * columns)
+  local clipLevel = math.floor(numberOfPixels * percent/100)
   
   local min, max = 256, 0
   
   img = il.RGB2YIQ(img)
   
-  histogram = {}
+  local histogram = {}
   
   for i = 0, 255 do
     histogram[i] = 0
@@ -512,7 +511,7 @@ local function histogramEqualize(img, percent)
   
   for row = 0, rows - 1 do
     for col = 0, columns - 1 do
-      intensity = img:at(row, col).y
+      local intensity = img:at(row, col).y
       histogram[intensity] = histogram[intensity] + 1
       if histogram[intensity] > clipLevel then
         local difference = histogram[intensity] - clipLevel
@@ -538,7 +537,7 @@ local function histogramEqualize(img, percent)
   
   for row = 0, rows - 1 do
     for col = 0, columns - 1 do
-      pixelIntensity = img:at(row, col).y
+      local pixelIntensity = img:at(row, col).y
       img:at(row, col).y =  lookUpTable[pixelIntensity]
     end
   end

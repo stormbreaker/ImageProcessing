@@ -4,13 +4,15 @@ local viz = require "visual"
 local il = require "il"
 local ourProcesses = require "pointprocess"
 
+--[[]]
+
 imageMenu("Our Processes",
 {
   {"Grayscale", ourProcesses.grayscale},
   {"Pseudocolor", ourProcesses.discretePseudocolor},
   {"Continuous", ourProcesses.continuousPseudocolor},
   {"Negate", ourProcesses.negate},
-  {"Brightness", ourProcesses.brightness, {{name = "Brightness level", type = "number", displaytype = "spin", default = 128, min = 0, max = 255}}},
+  {"Brightness", ourProcesses.brightness, {{name = "Brightness level", type = "number", displaytype = "spin", default = 128, min = -255, max = 255}}},
   {"Binary Threshold", ourProcesses.binaryThreshold, {{name = "threshold", type = "number", displaytype = "slider", default = 128, min = 0, max = 255}}},
   {"Posterize", ourProcesses.posterize, {{name = "levels", type = "number", displaytype = "slider", default = 8, min = 0, max = 255}}},
   {"Contrast", ourProcesses.contrast, {{name = "endpoint1", type = "number", displaytype = "slider", default = 0, min = 0, max = 255},
