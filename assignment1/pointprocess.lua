@@ -7,7 +7,9 @@ local bit = require "bit"
 
 --[[
     Author: Benjamin Kaiser
-    Description:
+    Description:  This function converts an image into grayscale by taking 30% of the red, 59% of the green and 11% of the blue
+    components and assigns this value to each of the same components for that pixel.  This is calculated for each pixel and
+    doesn't use a look up table.  
 ]]
 local function convertToGrayScale(img)
   local rows, columns = img.height, img.width
@@ -27,7 +29,8 @@ end
 
 --[[
     Author: Taylor Doell
-    Description:
+    Description: This function takes an image and negates each of the RGB components for a pixel and assigns it back to itself.
+    This function does not use a look up table.  
 ]]
 local function negate(img)
   return img:mapPixels( function( r, g, b )
@@ -38,7 +41,10 @@ end
 
 --[[
     Author: Benjamin Kaiser
-    Description:
+    Description: This function takes in an image and a value between 0 and 255 inclusive.  It then loops through the entire image
+    and then checks to see if the intensity value of the image converted to YIQ is greater then or equal to that threshold or less
+    than that threshold.  If it is above the threshold, then the intensity is set to 255 and if it is below, then the intensity is
+    set to 0.  
 ]]
 local function binaryThreshold(img, threshold)
   local rows, columns = img.height, img.width
@@ -176,7 +182,8 @@ end
 
 --[[
     Author: Benjamin Kaiser
-    Description:
+    Description:  This function takes an image and then simply averages the RGB components for a given pixel together and assigns that value
+    to each of the components so that the grayscale is computed with the components as an average of them all.  
 ]]
 local function avgGrayscale(img)
   local rows, columns = img.height, img.width
@@ -390,7 +397,8 @@ end
 
 --[[
     Author: Benjamin Kaiser
-    Description:
+    Description:  This function takes an image and then calls Dr. Weiss's show histogram function
+    to display a regular histogram of intensities.
 ]]
 local function histogramDisplay(img)
   return il.showHistogram(img)
@@ -398,7 +406,8 @@ end
 
 --[[
     Author: Benjamin Kaiser
-    Description:
+    Description: This function takes an image and then calls Dr. Weiss's show RGB component
+    histogram function to display a histogram for each of these components.  
 ]]
 local function histogramDisplayRGB(img)
   return il.showHistogramRGB(img)
@@ -406,7 +415,7 @@ end
 
 --[[
     Author: Benjamin Kaiser
-    Description:
+    Description:  
 ]]
 local function sliceBitPlane(img, plane)
   
