@@ -1,18 +1,26 @@
+--[[
+  Author: Benjamin Kaiser and Taylor Doell
+  Class: CSC 442 - Digital Image Processing
+  Assignment 1 - Point Processes
+  Description:  This file is the main file it creates the GUI for the application
+  and adds all of the menu items on along with their associated callback functions.
+  This is based on lip.lua which was created by Dr. Weiss and Alex Iverson
+]]
+
 -- LuaIP image processing routines
 require "ip"   -- this loads the packed distributable
 local viz = require "visual"
 local il = require "il"
 local ourProcesses = require "pointprocess"
 
---[[]]
-
+--[[Creates all of the point process menu items]]
 imageMenu("Our Processes",
 {
   {"Grayscale", ourProcesses.grayscale},
   {"Pseudocolor", ourProcesses.discretePseudocolor},
   {"Continuous", ourProcesses.continuousPseudocolor},
   {"Negate", ourProcesses.negate},
-  {"Brightness", ourProcesses.brightness, {{name = "Brightness level", type = "number", displaytype = "spin", default = 128, min = -255, max = 255}}},
+  {"Brightness", ourProcesses.brightness, {{name = "Brightness level", type = "number", displaytype = "slider", default = 0, min = -255, max = 255}}},
   {"Binary Threshold", ourProcesses.binaryThreshold, {{name = "threshold", type = "number", displaytype = "slider", default = 128, min = 0, max = 255}}},
   {"Posterize", ourProcesses.posterize, {{name = "levels", type = "number", displaytype = "slider", default = 8, min = 0, max = 255}}},
   {"Contrast", ourProcesses.contrast, {{name = "endpoint1", type = "number", displaytype = "slider", default = 0, min = 0, max = 255},
@@ -26,6 +34,7 @@ imageMenu("Our Processes",
   {"Solarization", ourProcesses.solarization, {{name = "solarization", type = "number", displaytype = "spin", default = 255, min = 0, max = 255}}},
 })
 
+--[[Creates the histogram process menu items]]
 imageMenu("Our Histogram",
 {
   {"Intensity Histogram", ourProcesses.intensityHistogram},
@@ -34,6 +43,7 @@ imageMenu("Our Histogram",
   {"Histogram Equalize with Clipping", ourProcesses.equalizeClip, {{name = "Percent", type = "number", displaytype = "textbox"}}}
 })
 
+--[[Creates the help and abbout menu item]]
 imageMenu("Help",
   {
     { "Help", viz.imageMessage( "Help", "To process an image:\n 1. File -> Open to select an image to process\n2. Click different menu options to perform computations\n" ..

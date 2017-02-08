@@ -1,9 +1,14 @@
+ --[[]]
+
 require "ip"
 local il = require "il"
 local math = require "math"
 local bit = require "bit"
 
-
+--[[
+    Author: Benjamin Kaiser
+    Description:
+]]
 local function convertToGrayScale(img)
   local rows, columns = img.height, img.width
   
@@ -20,6 +25,10 @@ local function convertToGrayScale(img)
  return img --il.YIQ2RGB(img)
 end
 
+--[[
+    Author: Taylor Doell
+    Description:
+]]
 local function negate(img)
   return img:mapPixels( function( r, g, b )
       return 255 - r, 255 - g, 255 - b
@@ -27,6 +36,10 @@ local function negate(img)
   )
 end
 
+--[[
+    Author: Benjamin Kaiser
+    Description:
+]]
 local function binaryThreshold(img, threshold)
   local rows, columns = img.height, img.width
   
@@ -45,6 +58,10 @@ local function binaryThreshold(img, threshold)
   return il.YIQ2RGB(img)
 end
 
+--[[
+    Author: Benjamin Kaiser
+    Description:
+]]
 local function posterize(img, numberOfLevels)
   local rows, columns = img.height, img.width
   
@@ -80,6 +97,10 @@ local function posterize(img, numberOfLevels)
   return il.YIQ2RGB(img)
 end
 
+--[[
+    Author: Taylor Doell
+    Description:
+]]
 local function brightness(img, amount)
   local rows, columns = img.height, img.width
 
@@ -104,6 +125,10 @@ local function brightness(img, amount)
   return il.YIQ2RGB(img)
 end
 
+--[[
+    Author: Taylor Doell
+    Description:
+]]
 local function contrast(img, startPoint, endPoint)
   local rows, columns = img.height, img.width
   local slope = 255 / (endPoint - startPoint)
@@ -131,6 +156,10 @@ local function contrast(img, startPoint, endPoint)
   return il.YIQ2RGB(img)
 end
 
+--[[
+    Author: Taylor Doell
+    Description:
+]]
 local function gamma(img, gamma)
   local rows, columns = img.height, img.width
   
@@ -145,6 +174,10 @@ local function gamma(img, gamma)
   return il.YIQ2RGB(img)
 end
 
+--[[
+    Author: Benjamin Kaiser
+    Description:
+]]
 local function avgGrayscale(img)
   local rows, columns = img.height, img.width
   
@@ -159,6 +192,10 @@ local function avgGrayscale(img)
   return img
 end
 
+--[[
+    Author: Benjamin Kaiser
+    Description:
+]]
 local function discretePseudocolor(img)
   local rows, columns = img.height, img.width
   
@@ -237,6 +274,10 @@ local function discretePseudocolor(img)
   return img
 end
 
+--[[
+    Author: Benjamin Kaiser
+    Description:
+]]
 local function continuousPseudocolor(img)
   local rows, columns = img.height, img.width
   
@@ -269,63 +310,10 @@ local function continuousPseudocolor(img)
   return img
 end
 
-local function benModifiedContrastStretch(img, darkPrecent, lightPercent)
-  local rows, columns = img.height, img.width
-  local pixelCount = rows * columns
-  local histogram = {}
-  local max = 0
-  local min = 256
-  
-  local count = 0
-  
-  local intensity = 0
-  
-  local darkCountToIgnore = (darkPrecent /100) * pixelCount
-  local lightCountToIgnore = (lightPercent /100) * pixelCount
-  
-  img = il.RGB2YIQ(img)
-  
-  for i = 0, 255 do
-    histogram[i] = 0
-  end
-  
-  for row = 0, rows - 1 do
-    for col = 0, columns - 1 do
-      intensity = img:at(row, col).y
-      histogram[intensity] = histogram[intensity] + 1
-    end
-  end
-  
-  for i = 0, 255 do
-    count = count + histogram[i]
-    
-    if count >= darkCountToIgnore then
-      min = i
-      break
-    end
-  end
-  
-  count = 0
-  
-  for i = 255, 0, -1 do
-    count = count + histogram[i]
-    
-    if count >= lightCountToIgnore then
-      max = i
-      break
-    end
-  end
-  
-  for row = 0, rows - 1 do
-    for col = 0, columns - 1 do
-      img:at(row, col).y = (255 / (max - min)) * (img:at(row, col).y - min)
-    end
-  end
-  
-  return il.YIQ2RGB(img)
-end
-
-
+--[[
+    Author: Taylor Doell
+    Description:
+]]
 local function modifiedContrastStretch(img, darkPercent, lightPercent)
   local rows, columns = img.height, img.width
   local pixelCount = rows * columns
@@ -392,22 +380,34 @@ local function modifiedContrastStretch(img, darkPercent, lightPercent)
   return il.YIQ2RGB(img)
 end
 
-local function benAutoContrastStretch(img)
-  return benModifiedContrastStretch(img, 0, 0)
-end
-
+--[[
+    Author: Taylor Doell
+    Description:
+]]
 local function automaticContrastStretch(img)
   return modifiedContrastStretch(img, 5, 5)
 end
 
+--[[
+    Author: Benjamin Kaiser
+    Description:
+]]
 local function histogramDisplay(img)
   return il.showHistogram(img)
 end
 
+--[[
+    Author: Benjamin Kaiser
+    Description:
+]]
 local function histogramDisplayRGB(img)
   return il.showHistogramRGB(img)
 end
 
+--[[
+    Author: Benjamin Kaiser
+    Description:
+]]
 local function sliceBitPlane(img, plane)
   
   local rows, columns = img.height, img.width
@@ -458,6 +458,10 @@ local function sliceBitPlane(img, plane)
   return img
 end
 
+--[[
+    Author: Benjamin Kaiser
+    Description:
+]]
 local function compressDynamicRange(img)
   local rows, columns = img.height, img.width
   
@@ -472,6 +476,10 @@ local function compressDynamicRange(img)
   return il.YIQ2RGB(img)
 end
 
+--[[
+    Author: Taylor Doell
+    Description:
+]]
 local function solarization(img, threshold)
   local rows, columns = img.height, img.width
   
@@ -494,6 +502,10 @@ local function solarization(img, threshold)
   return img
 end
 
+--[[
+    Author: Benjamin Kaiser
+    Description:
+]]
 local function histogramEqualize(img, percent)
   local rows, columns = img.height, img.width
   local numberOfPixels = (rows * columns)
@@ -545,6 +557,10 @@ local function histogramEqualize(img, percent)
   return il.YIQ2RGB(img)
 end
 
+--[[
+    Author: Benjamin Kaiser
+    Description:
+]]
 local function histogramEqualizeAuto(img)
   return histogramEqualize(img, 100)
 end
