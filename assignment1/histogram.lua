@@ -1,4 +1,7 @@
- --[[]]
+ --[[
+ Authors:  Benjamin Kaiser and Taylor Doell
+  This file handles all of the histogram functions for the histogram menu in our program.  
+]]
 
 require "ip"
 local il = require "il"
@@ -53,11 +56,16 @@ end
 
 --[[
     Author: Benjamin Kaiser
-    Description:
+    Description:  This function takes an image and a percent and then the percentage is used
+    to determine the clip level for the pixels.  When we're looping through the histogram,
+    if the number in the "bucket" is greater than the clip level we subtract the difference
+    of the clip level and the total amount in the bucket from the total number of pixels in
+    the image which is then used to compute the proper cumulative distribution function.  
 ]]
 local function histogramEqualize(img, percent)
   local rows, columns = img.height, img.width
   local numberOfPixels = (rows * columns)
+  -- determine the intensity that we 
   local clipLevel = math.floor(numberOfPixels * percent/100)
   
   if percent > 100 then
@@ -68,25 +76,13 @@ local function histogramEqualize(img, percent)
   
   img = il.RGB2YIQ(img)
   
-  local histogram = {}
+  local histogram = computeHistogram(img)
   
   for i = 0, 255 do
-    histogram[i] = 0
-  end
-  
-  for row = 0, rows - 1 do
-    for col = 0, columns - 1 do
-      local intensity = img:at(row, col).y
-      
-      histogram[intensity] = histogram[intensity] + 1
-      
-      if histogram[intensity] > clipLevel then
-        local difference = histogram[intensity] - clipLevel
-        
-        numberOfPixels = numberOfPixels - difference
-
-        histogram[intensity] = clipLevel
-      end
+    if histogram[i] > clipLevel then
+      local difference = histogram[i] - clipLevel
+      numberOfPixels = numberOfPixels - difference
+      histogram[i] = clipLevel
     end
   end
   
@@ -94,15 +90,16 @@ local function histogramEqualize(img, percent)
   
   local sum = 0
   
+  -- compute lookup table
   for i = 0, 255 do
     sum = 0
     for j = 0, i do
       sum = sum + (histogram[j] / numberOfPixels)
-    end
-    
+    end    
     lookUpTable[i] = math.floor(sum * 255)
   end
   
+  -- process the image
   for row = 0, rows - 1 do
     for col = 0, columns - 1 do
       local pixelIntensity = img:at(row, col).y
@@ -115,7 +112,8 @@ end
 
 --[[
     Author: Benjamin Kaiser
-    Description:
+    Description:  This function calls the the histogram equalization function
+    with the default of 100%.  
 ]]
 local function histogramEqualizeAuto(img)
   return histogramEqualize(img, 100)
