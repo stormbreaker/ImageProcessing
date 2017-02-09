@@ -1,4 +1,7 @@
- --[[]]
+ --[[
+ Authors: Benjamin Kaiser and Taylor Doell
+ This file contains all of the functions required to fill the point process menu items.  
+]]
 
 require "ip"
 local il = require "il"
@@ -18,6 +21,7 @@ local function convertToGrayScale(img)
   local sum
   for row = 0, rows-1 do
     for column = 0, columns-1 do
+        -- compute the weighted sum
         sum = .3 * img:at(row, column).r + .59 * img:at(row, column).g + .11 * img:at(row, column).b
         img:at(row, column).r = sum
         img:at(row, column).g = sum
@@ -319,7 +323,13 @@ end
 
 --[[
     Author: Benjamin Kaiser
-    Description:
+    Description:  This function takes an image and then creates a continuous pseudocolor pattern.
+    It creates a lookup table before doing any processing on the actual image to save on calculations
+    and then when the image is being processed, the values are pulled from the lookup table.  
+    The pattern used is that the red values will increase linearlly with a slope of 1 while the 
+    green values are the exact inverse.  These decrease with a slope of -1.  The green values
+    increase with a slope of 1 from 0 to 127 and then from 128 to 255 they decrease with a slope
+    of -1
 ]]
 local function continuousPseudocolor(img)
   local rows, columns = img.height, img.width
@@ -329,6 +339,7 @@ local function continuousPseudocolor(img)
   
   img = avgGrayscale(img)
   
+  --compute lookup table
   for i = 0, 255 do 
     coordinates = {}
     coordinates['red'] = i
@@ -341,6 +352,7 @@ local function continuousPseudocolor(img)
     lookUpTable[i] = coordinates
   end
   
+  --process image
   for row = 0, rows-1 do
     for column = 0, columns-1 do
       local pixel = img:at(row, column)
@@ -450,31 +462,37 @@ end
 
 --[[
     Author: Benjamin Kaiser
-    Description:  
+    Description:  This function takes an image and a number between 0 and 7 which represents
+    the index of the bit for each component that needs checked for a bit-plane slicing.  
+    Depedning on what this value is, the mask variable is set accordingly so that the proper
+    bit pattern is made.  After that, the pixel value is ANDed for each componenet and shifted
+    down so that the outcome is either 0 or 1.  If it is 1, the intensity for that component is
+    set to 255 and if it is 0, then the intensity for that componenet is set to 0.
 ]]
 
 local function sliceBitPlane(img, plane)
   
   local rows, columns = img.height, img.width
   
-  local mask = 1
+  local mask = 1 -- 00000001
   
   if plane == 1 then
-    mask = 2
+    mask = 2 -- 00000010
   elseif plane == 2 then
-    mask = 4
+    mask = 4 -- 00000100
   elseif plane == 3 then
-    mask = 8
+    mask = 8 -- 00001000
   elseif plane == 4 then
-    mask = 16
+    mask = 16 -- 00010000
   elseif plane == 5 then
-    mask = 32
+    mask = 32 -- 00100000
   elseif plane == 6 then
-    mask = 64
+    mask = 64 -- 01000000
   elseif plane == 7 then
-    mask = 128
+    mask = 128 -- 10000000
   end
     
+  
   for row = 0, rows-1 do
     for column = 0, columns-1 do
       local pixel = img:at(row, column)
@@ -505,13 +523,15 @@ end
 
 --[[
     Author: Benjamin Kaiser
-    Description:
+    Description:  This function takes an image and for each pixel value it compresses the range of the
+    pixel intensities using the base 10 log function built into Lua.  The equation came directly from the
+    book along with some research done online to determine that c = 255/math.log(256).  
 ]]
 local function compressDynamicRange(img)
   local rows, columns = img.height, img.width
   
   img = il.RGB2YIQ(img)
-  
+  --process image
   for row = 0, rows - 1 do
     for col = 0, columns - 1 do
       img:at(row, col).y =  255/math.log(256) * math.log(1 + img:at(row, col).y);
