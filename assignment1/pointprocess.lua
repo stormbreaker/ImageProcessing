@@ -4,6 +4,7 @@ require "ip"
 local il = require "il"
 local math = require "math"
 local bit = require "bit"
+local hist = require "histogram"
 
 --[[
     Author: Benjamin Kaiser
@@ -27,7 +28,9 @@ end
 
 --[[
     Author: Taylor Doell
-    Description:
+    Description: This function uses a lambda function to pass
+      to mapPixels to compute the image negative. This lambda
+      function was written by Dr. Weiss.
 ]]
 local function negate(img)
   return img:mapPixels( function( r, g, b )
@@ -99,19 +102,26 @@ end
 
 --[[
     Author: Taylor Doell
-    Description:
+    Description: This function modifies each pixels intensity
+      value by adding the brightness amount to the intensity.
+      To prevent overflowing our pixel value, we store the modified
+      value in a local variable and then clip that value if it
+      is above or below the max and min value that an intensity
+      value can be.
 ]]
 local function brightness(img, amount)
   local rows, columns = img.height, img.width
 
-  img = il.RGB2YIQ(img)
+  img = il.RGB2YIQ(img) -- Convert image to YIQ to modify intensities
 
+  -- Loop through all pixels to modify brightness
   for row = 0, rows - 1 do
     for col = 0, columns - 1 do
       local pixel = img:at(row, col).y
       
       pixel = pixel + amount
 
+      -- Clip the pixel intensity to prevent overflow
       if pixel > 255 then
         pixel = 255
       elseif pixel < 0 then
@@ -122,56 +132,68 @@ local function brightness(img, amount)
     end
   end
 
+  -- Return as RGB to show properly
   return il.YIQ2RGB(img)
 end
 
 --[[
     Author: Taylor Doell
-    Description:
+    Description: This function calculates the slope of the line between
+      the startpoint and the endpoint to use in the y=mx + b when creating
+      the lookup table. Then the function uses the LUT to set the new
+      intensity value for that pixel.
 ]]
 local function contrast(img, startPoint, endPoint)
   local rows, columns = img.height, img.width
-  local slope = 255 / (endPoint - startPoint)
-  local intercept = -startPoint * slope
+  local slope = 255 / (endPoint - startPoint) -- Calculate slope of line
+  local intercept = -startPoint * slope -- Calculate intercept of line
   local table = {}
   
+  img = il.RGB2YIQ(img)
+  
+  -- Loop through all intensities to compute LUT
   for i = 0, 255 do
     if i <= startPoint then
       table[i] = 0
     elseif i >= endPoint then
       table[i] = 255
     else
+      -- Computer y = mx + b to get new intensity value at the current intensity
       table[i] = slope * i + intercept
     end
   end
-  
-  img = il.RGB2YIQ(img)
     
   for row = 0, rows - 1 do
     for col = 0, columns - 1 do
+      -- Use LUT to map the old intensity value to the new intensity value
       img:at(row, col).y = table[img:at(row, col).y];
     end
   end
   
-  return il.YIQ2RGB(img)
+  return il.YIQ2RGB(img) -- Return RGB image to properly display modified image
 end
 
 --[[
     Author: Taylor Doell
-    Description:
+    Description: This function uses 255 * (intensity / 255) ^ gamma to calculate
+      a new intensity value for the pixel.
 ]]
 local function gamma(img, gamma)
   local rows, columns = img.height, img.width
+  local intensity = 0
   
-  img = il.RGB2YIQ(img)
+  img = il.RGB2YIQ(img) -- Convert image to YIQ model
   
   for row = 0, rows - 1 do
     for col = 0, columns - 1 do
-      img:at(row, col).y = 255 * math.pow((img:at(row, col).y / 255), gamma);
+      intensity = img:at(row, col).y
+      
+      -- Use equation 255 * (intensity / 255) ^ gamma  to calculate the gamma value
+      img:at(row, col).y = 255 * math.pow(intensity / 255, gamma);
     end
   end
   
-  return il.YIQ2RGB(img)
+  return il.YIQ2RGB(img) -- Return RGB image to show properly
 end
 
 --[[
@@ -317,7 +339,6 @@ end
 local function modifiedContrastStretch(img, darkPercent, lightPercent)
   local rows, columns = img.height, img.width
   local pixelCount = rows * columns
-  local histogram = {}
   local i = 0
   local max = 0
   local min = 0
@@ -326,20 +347,12 @@ local function modifiedContrastStretch(img, darkPercent, lightPercent)
   local darkCount = (darkPercent / 100) * pixelCount
   local lightCount = (lightPercent / 100) * pixelCount
   
+  -- Get histogram for image
+  local histogram = hist.computeHistogram(img)
+  
   img = il.RGB2YIQ(img)
   
-  for i = 0, 255 do
-    histogram[i] = 0
-  end
-  
-  for row = 0, rows - 1 do
-    for col = 0, columns - 1 do
-      intensity = img:at(row, col).y
-      
-      histogram[intensity] = histogram[intensity] + 1
-    end
-  end
-  
+  -- Loop through histogram to find the min value for the endpoint
   for i = 0, 255 do
     count = count + histogram[i]
     
@@ -349,6 +362,7 @@ local function modifiedContrastStretch(img, darkPercent, lightPercent)
     end
   end
   
+  -- Loop through histogram to find the max value for the startpoint
   for i = 255, 0, -1 do
     count = count + histogram[i]
     
@@ -358,50 +372,40 @@ local function modifiedContrastStretch(img, darkPercent, lightPercent)
     end
   end
   
+  -- Swap values in case of crossing
   if min > max then
     max, min = min, max
   end
   
+  -- Loop and compute calculation to each pixel
   for row = 0, rows - 1 do
     for col = 0, columns - 1 do
-
+      -- Compute new pixel value
       local pixVal = math.floor((255 / (max - min)) * (img:at(row, col).y - min))
       
+      -- Clip value prevent overflow
       if pixVal > 255 then
         pixVal = 255
       elseif pixVal < 0 then
         pixVal = 0
       end
       
+      -- Set new pixel value as the intensity
       img:at(row, col).y = pixVal
     end
   end
   
-  return il.YIQ2RGB(img)
+  return il.YIQ2RGB(img) -- Return RGB to show properly
 end
 
 --[[
     Author: Taylor Doell
-    Description:
+    Description: This function calls the modified contrast
+      stretch with two default values which skip the first
+      and last 5% of the pixels.
 ]]
 local function automaticContrastStretch(img)
   return modifiedContrastStretch(img, 5, 5)
-end
-
---[[
-    Author: Benjamin Kaiser
-    Description:
-]]
-local function histogramDisplay(img)
-  return il.showHistogram(img)
-end
-
---[[
-    Author: Benjamin Kaiser
-    Description:
-]]
-local function histogramDisplayRGB(img)
-  return il.showHistogramRGB(img)
 end
 
 --[[
@@ -478,13 +482,20 @@ end
 
 --[[
     Author: Taylor Doell
-    Description:
+    Description: This function works closely to
+      how the negate function works, but only
+      modifies the pixel values if they are less
+      than the threshold value.
 ]]
 local function solarization(img, threshold)
   local rows, columns = img.height, img.width
   
+  -- Loop through all pixels
   for row = 0, rows - 1 do
     for col = 0, columns - 1 do
+      -- For each color component, modify if value is less
+      -- then the threshold value given by user
+      
       if img:at(row, col).r <= threshold then
         img:at(row, col).r = 255-img:at(row, col).r
       end
@@ -503,69 +514,10 @@ local function solarization(img, threshold)
 end
 
 --[[
-    Author: Benjamin Kaiser
-    Description:
+  This return statement exposes the local functions to any
+  other file that 'requires' this file into their program.
 ]]
-local function histogramEqualize(img, percent)
-  local rows, columns = img.height, img.width
-  local numberOfPixels = (rows * columns)
-  local clipLevel = math.floor(numberOfPixels * percent/100)
-  
-  local min, max = 256, 0
-  
-  img = il.RGB2YIQ(img)
-  
-  local histogram = {}
-  
-  for i = 0, 255 do
-    histogram[i] = 0
-  end
-  
-  for row = 0, rows - 1 do
-    for col = 0, columns - 1 do
-      local intensity = img:at(row, col).y
-      histogram[intensity] = histogram[intensity] + 1
-      if histogram[intensity] > clipLevel then
-        local difference = histogram[intensity] - clipLevel
-        numberOfPixels = numberOfPixels - difference
-        print(numberOfPixels)
-        histogram[intensity] = clipLevel
-      end
-    end
-  end
-  
-  local lookUpTable = {}
-  
-  local sum = 0
-  
-  for i = 0, 255 do
-    sum = 0
-    for j = 0, i do
-      sum = sum + (histogram[j] / numberOfPixels)
-    end
-    print(sum)
-    lookUpTable[i] = math.floor(sum * 255)
-  end
-  
-  for row = 0, rows - 1 do
-    for col = 0, columns - 1 do
-      local pixelIntensity = img:at(row, col).y
-      img:at(row, col).y =  lookUpTable[pixelIntensity]
-    end
-  end
-  
-  return il.YIQ2RGB(img)
-end
-
---[[
-    Author: Benjamin Kaiser
-    Description:
-]]
-local function histogramEqualizeAuto(img)
-  return histogramEqualize(img, 100)
-end
-
-return 
+return
 {
   grayscale = convertToGrayScale,
   negate = negate,
@@ -578,12 +530,7 @@ return
   modifiedContrastStretch = modifiedContrastStretch,
   discretePseudocolor = discretePseudocolor,
   continuousPseudocolor = continuousPseudocolor,
-  intensityHistogram = histogramDisplay,
-  rgbHistogram = histogramDisplayRGB,
   bitSlice = sliceBitPlane,
-  autoStretch = benAutoContrastStretch,
   logCompress = compressDynamicRange,
-  solarization = solarization,
-  equalize = histogramEqualizeAuto,
-  equalizeClip = histogramEqualize
+  solarization = solarization
 }

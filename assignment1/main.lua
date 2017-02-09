@@ -11,36 +11,37 @@
 require "ip"   -- this loads the packed distributable
 local viz = require "visual"
 local il = require "il"
-local ourProcesses = require "pointprocess"
+local point = require "pointprocess"
+local hist = require "histogram"
 
 --[[Creates all of the point process menu items]]
-imageMenu("Our Processes",
+imageMenu("Point Processes",
 {
-  {"Grayscale", ourProcesses.grayscale},
-  {"Pseudocolor", ourProcesses.discretePseudocolor},
-  {"Continuous", ourProcesses.continuousPseudocolor},
-  {"Negate", ourProcesses.negate},
-  {"Brightness", ourProcesses.brightness, {{name = "Brightness level", type = "number", displaytype = "slider", default = 0, min = -255, max = 255}}},
-  {"Binary Threshold", ourProcesses.binaryThreshold, {{name = "threshold", type = "number", displaytype = "slider", default = 128, min = 0, max = 255}}},
-  {"Posterize", ourProcesses.posterize, {{name = "levels", type = "number", displaytype = "slider", default = 8, min = 0, max = 255}}},
-  {"Contrast", ourProcesses.contrast, {{name = "endpoint1", type = "number", displaytype = "slider", default = 0, min = 0, max = 255},
+  {"Grayscale", point.grayscale},
+  {"Pseudocolor", point.discretePseudocolor},
+  {"Continuous", point.continuousPseudocolor},
+  {"Negate", point.negate},
+  {"Brightness", point.brightness, {{name = "Brightness level", type = "number", displaytype = "slider", default = 0, min = -255, max = 255}}},
+  {"Binary Threshold", point.binaryThreshold, {{name = "threshold", type = "number", displaytype = "slider", default = 128, min = 0, max = 255}}},
+  {"Posterize", point.posterize, {{name = "levels", type = "number", displaytype = "slider", default = 8, min = 0, max = 255}}},
+  {"Contrast", point.contrast, {{name = "endpoint1", type = "number", displaytype = "slider", default = 0, min = 0, max = 255},
                                        {name = "endpoint2", type = "number", displaytype = "slider", default = 255, min = 0, max = 255}}},
-  {"Gamma", ourProcesses.gamma, {{name = "Gamma", type = "number", displaytype = "textbox"}}},
-  {"Log", ourProcesses.logCompress},
-  {"Automatic Contrast Stretch", ourProcesses.automaticContrastStretch},
-  {"Modified Contrast Stretch", ourProcesses.modifiedContrastStretch, {{name = "Dark Percent", type = "number", displaytype = "slider", default = 0, min = 0, max = 100},
+  {"Gamma", point.gamma, {{name = "Gamma", type = "number", displaytype = "textbox"}}},
+  {"Log", point.logCompress},
+  {"Automatic Contrast Stretch", point.automaticContrastStretch},
+  {"Modified Contrast Stretch", point.modifiedContrastStretch, {{name = "Dark Percent", type = "number", displaytype = "slider", default = 0, min = 0, max = 100},
   {name = "Light Percent", type = "number", displaytype = "slider", default = 0, min = 0, max = 100}}},
-  {"Bitplane Slice", ourProcesses.bitSlice, {{name = "plane", type = "number", displaytype = "spin", default = 7, min = 0, max = 7}}},
-  {"Solarization", ourProcesses.solarization, {{name = "solarization", type = "number", displaytype = "spin", default = 255, min = 0, max = 255}}},
+  {"Bitplane Slice", point.bitSlice, {{name = "plane", type = "number", displaytype = "spin", default = 7, min = 0, max = 7}}},
+  {"Solarization (Added Process)", point.solarization, {{name = "solarization", type = "number", displaytype = "spin", default = 255, min = 0, max = 255}}},
 })
 
 --[[Creates the histogram process menu items]]
-imageMenu("Our Histogram",
+imageMenu("Histogram Methods",
 {
-  {"Intensity Histogram", ourProcesses.intensityHistogram},
-  {"RGB Histogram", ourProcesses.rgbHistogram},
-  {"Histogram Equalization", ourProcesses.equalize},
-  {"Histogram Equalize with Clipping", ourProcesses.equalizeClip, {{name = "Percent", type = "number", displaytype = "textbox"}}}
+  {"Intensity Histogram", hist.intensityHistogram},
+  {"RGB Histogram", hist.rgbHistogram},
+  {"Histogram Equalization", hist.equalize},
+  {"Histogram Equalize with Clipping", hist.equalizeClip, {{name = "Clip %", type = "number", displaytype = "textbox", default = "1.0"}}}
 })
 
 --[[Creates the help and abbout menu item]]
