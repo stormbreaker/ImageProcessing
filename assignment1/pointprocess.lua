@@ -15,7 +15,6 @@ local hist = require "histogram"
 local function convertToGrayScale(img)
   local rows, columns = img.height, img.width
   
-  --img = il.RGB2YIQ(img)
   local sum
   for row = 0, rows-1 do
     for column = 0, columns-1 do
@@ -25,7 +24,7 @@ local function convertToGrayScale(img)
         img:at(row, column).b = sum
       end
     end
- return img --il.YIQ2RGB(img)
+ return img
 end
 
 --[[
@@ -51,11 +50,14 @@ end
 local function binaryThreshold(img, threshold)
   local rows, columns = img.height, img.width
   
+  -- necessary to retrive a black and white image at the end without weird colorings
   img = convertToGrayScale(img)
   
+  --process image
   img = il.RGB2YIQ(img)
   for row = 0, rows-1 do
     for column = 0, columns-1 do
+      -- check to see if pixel intensity is above or below the required threshold
       if img:at(row, column).y >= threshold then
         img:at(row, column).y = 255
       elseif img:at(row, column).y < threshold then
@@ -68,7 +70,11 @@ end
 
 --[[
     Author: Benjamin Kaiser
-    Description:
+    Description:  This function takes an image and the number of levels that the images needs to
+    be posterized into.  In other words, the discrete number of intensity levels that need to be displayed
+    on this picture.  These levels are computed and stored into a lookup table which saves on calculations.
+    When looping through the picture, then the values are loaded directly from the look up table.  
+    We perform clipping so that if a computed value is above 255, we set the value to 255 exactly.  
 ]]
 local function posterize(img, numberOfLevels)
   local rows, columns = img.height, img.width
@@ -79,11 +85,12 @@ local function posterize(img, numberOfLevels)
   local counter = 0
   
   local lookUpTable = {}
-  
+  --compute lookup table
   for index = 0, 255 do
     if counter == numberEachLevel - 1 then
       counter = 0
       currentLevel = currentLevel + incrementValue
+      --clipping
       if currentLevel > 255 then
         currentLevel = 255
       end
@@ -94,6 +101,7 @@ local function posterize(img, numberOfLevels)
   
   img = il.RGB2YIQ(img)
   
+  --loop through image
   for row = 0, rows-1 do
     for column = 0, columns-1 do
       local pixel = img:at(row, column).y
@@ -203,14 +211,17 @@ end
 
 --[[
     Author: Benjamin Kaiser
-    Description:  This function takes an image and then simply averages the RGB components for a given pixel together and assigns that value
-    to each of the components so that the grayscale is computed with the components as an average of them all.  
+    Description:  This function takes an image and then simply averages the RGB
+    components for a given pixel together and assigns that value
+    to each of the components so that the grayscale is computed
+    with the components as an average of them all.  
 ]]
 local function avgGrayscale(img)
   local rows, columns = img.height, img.width
   
   for row = 0, rows-1 do
     for column = 0, columns-1 do
+      --compute the sum
       local sum = img:at(row, column).r + img:at(row, column).g + img:at(row, column).b
       img:at(row, column).r = sum/3
       img:at(row, column).g = sum/3
@@ -222,7 +233,9 @@ end
 
 --[[
     Author: Benjamin Kaiser
-    Description:
+    Description:  This function takes an image and converts the image
+    to a grayscale image.  We then build up a lookup table with hardcoded discrete
+    pseudocode values.  
 ]]
 local function discretePseudocolor(img)
   local rows, columns = img.height, img.width
@@ -233,6 +246,7 @@ local function discretePseudocolor(img)
 
   local coordinates = {}
 
+  -- create the lookup table
   for i = 0, 31 do
     coordinates = {}
     coordinates['red'] = 255
@@ -290,6 +304,7 @@ local function discretePseudocolor(img)
     lookUpTable[i] = coordinates
   end
   
+  --process the image
   for row = 0, rows-1 do
     for column = 0, columns-1 do
       local pixel = img:at(row, column)
