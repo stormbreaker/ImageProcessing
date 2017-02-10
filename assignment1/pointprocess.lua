@@ -418,25 +418,30 @@ local function sliceBitPlane(img, plane)
   
   img = avgGrayscale(img)
   
+  -- process the image
   for row = 0, rows-1 do
     for column = 0, columns-1 do
       local pixel = img:at(row, column)
+      --check red color component
       if bit.rshift(bit.band(mask, pixel.r), plane) == 1 then
         pixel.r = 255
       elseif bit.rshift(bit.band(mask, pixel.r), plane) == 0 then
         pixel.r = 0
       end
+      -- check green component
       if bit.rshift(bit.band(mask, pixel.g), plane) == 1 then
         pixel.g = 255
       elseif bit.rshift(bit.band(mask, pixel.g), plane) == 0 then
         pixel.g = 0
       end
+      --check blue component
       if bit.rshift(bit.band(mask, pixel.b), plane) == 1 then
         pixel.b = 255
       elseif bit.rshift(bit.band(mask, pixel.g), plane) == 0 then
         pixel.b = 0
       end
       
+      -- set final values
       img:at(row, column).r = pixel.r
       img:at(row, column).g = pixel.g
       img:at(row, column).b = pixel.b
