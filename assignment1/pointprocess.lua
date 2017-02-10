@@ -511,8 +511,6 @@ return
   posterize = posterize,
   contrast = contrast,
   gamma = gamma,
-  automaticContrastStretch = automaticContrastStretch,
-  modifiedContrastStretch = modifiedContrastStretch,
   discretePseudocolor = discretePseudocolor,
   continuousPseudocolor = continuousPseudocolor,
   bitSlice = sliceBitPlane,

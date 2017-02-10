@@ -209,6 +209,8 @@ return
 {
   intensityHistogram = histogramDisplay,
   rgbHistogram = histogramDisplayRGB,
+  automaticContrastStretch = automaticContrastStretch,
+  modifiedContrastStretch = modifiedContrastStretch,
   equalize = histogramEqualizeAuto,
   equalizeClip = histogramEqualize,
   computeHistogram = computeHistogram
