@@ -76,7 +76,7 @@ local function modifiedContrastStretch(img, darkPercent, lightPercent)
   local lightCount = (lightPercent / 100) * pixelCount
   
   -- Get histogram for image
-  local histogram = hist.computeHistogram(img)
+  local histogram = computeHistogram(img)
   
   img = il.RGB2YIQ(img)
   

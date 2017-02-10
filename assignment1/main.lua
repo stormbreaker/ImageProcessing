@@ -28,7 +28,6 @@ imageMenu("Point Processes",
                                        {name = "endpoint2", type = "number", displaytype = "slider", default = 255, min = 0, max = 255}}},
   {"Gamma", point.gamma, {{name = "Gamma", type = "number", displaytype = "textbox"}}},
   {"Log", point.logCompress},
-  {name = "Light Percent", type = "number", displaytype = "slider", default = 0, min = 0, max = 100}}},
   {"Bitplane Slice", point.bitSlice, {{name = "plane", type = "number", displaytype = "spin", default = 7, min = 0, max = 7}}},
   {"Solarization (Added Process)", point.solarization, {{name = "solarization", type = "number", displaytype = "spin", default = 255, min = 0, max = 255}}},
 })
@@ -42,6 +41,7 @@ imageMenu("Histogram Methods",
   {"Histogram Equalize with Clipping", hist.equalizeClip, {{name = "Clip %", type = "number", displaytype = "textbox", default = "1.0"}}},
   {"Automatic Contrast Stretch", hist.automaticContrastStretch},
   {"Modified Contrast Stretch", hist.modifiedContrastStretch, {{name = "Dark Percent", type = "number", displaytype = "slider", default = 0, min = 0, max = 100},
+  {name = "Light Percent", type = "number", displaytype = "slider", default = 0, min = 0, max = 100}}},
 })
 
 --[[Creates the help and abbout menu item]]
