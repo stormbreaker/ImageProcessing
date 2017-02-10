@@ -367,7 +367,13 @@ end
 
 --[[
     Author: Taylor Doell
-    Description:
+    Description: This function uses a darkPercent of pixels and a lightPercent
+      of pixels to ignore when computing the contrast stretch. It calls our
+      histogram function to retrieve a histogram for the input image. Using
+      that histogram we find the minimun and maximum intensity value and only
+      swap them if they cross each other. Next we use the min and max values in
+      an equation in order to find the next pixel value. Like a few other
+      functions, we clip the pixel value to prevent overflow.
 ]]
 local function modifiedContrastStretch(img, darkPercent, lightPercent)
   local rows, columns = img.height, img.width
