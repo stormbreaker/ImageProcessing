@@ -415,7 +415,8 @@ local function sliceBitPlane(img, plane)
   elseif plane == 7 then
     mask = 128 -- 10000000
   end
-    
+  
+  img = avgGrayscale(img)
   
   for row = 0, rows-1 do
     for column = 0, columns-1 do
