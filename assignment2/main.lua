@@ -28,7 +28,8 @@ imageMenu("Noise", {})
 imageMenu("Filter", 
 {
   {"3x3 Smoothing", filt.smoothing},
-  {"3x3 Sharpen", filt.sharpen}
+  {"3x3 Sharpen", filt.sharpen},
+  {"Median+", filt.medianplus}
 })
 
 start()
