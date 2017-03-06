@@ -1,6 +1,7 @@
 require "ip"
 local viz = require"visual"
 local il = require "il"
+local filt = require "filter"
 
 local cmarg2 = {name = "color model", type = "string", displaytype = "combo", choices = {"yiq", "yuv", "ihs"}, default = "yiq"}
 
@@ -23,5 +24,11 @@ imageMenu("Convienence Functions",
 imageMenu("Edge Detection", {})
 
 imageMenu("Noise", {})
+
+imageMenu("Filter", 
+{
+  {"3x3 Smoothing", filt.smoothing},
+  {"3x3 Sharpen", filt.sharpen}
+})
 
 start()
