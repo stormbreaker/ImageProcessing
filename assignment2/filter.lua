@@ -140,9 +140,37 @@ local function plusMedianFilter(img)
 
 end
 
+local function meanFilter(img, n)
+  local rows, columns = img.height, img.width
+  local cloneImg = img:clone()
+  local filterOffset = math.floor(n / 2)
+  local sqr = n * n
+  local sum = 0
+  
+  img = il.RGB2YIQ(img)
+  cloneImg = il.RGB2YIQ(cloneImg)
+  
+  for row = n, rows - n - 1 do
+    for col = n, columns - n - 1 do
+      sum = 0
+      
+      for rowFilter = -1 * filterOffset, filterOffset do
+        for colFilter = -1 * filterOffset, filterOffset do
+          sum = sum + img:at(row + rowFilter, col + colFilter).y
+        end
+      end
+      
+      cloneImg:at(row, col).y = sum / sqr
+    end
+  end
+  
+  return il.YIQ2RGB(cloneImg)
+end
+
 return
 {
   smoothing = smoothing,
   sharpen = sharpen,
-  medianplus = plusMedianFilter
+  medianplus = plusMedianFilter,
+  mean = meanFilter
 }

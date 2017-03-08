@@ -29,7 +29,8 @@ imageMenu("Filter",
 {
   {"3x3 Smoothing", filt.smoothing},
   {"3x3 Sharpen", filt.sharpen},
-  {"Median+", filt.medianplus}
+  {"Median+", filt.medianplus},
+  {"Mean", filt.mean, {{name = "Mean n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}}
 })
 
 start()
