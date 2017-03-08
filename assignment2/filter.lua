@@ -167,10 +167,54 @@ local function meanFilter(img, n)
   return il.YIQ2RGB(cloneImg)
 end
 
+local function minMaxFilter(img, n, isMin)
+  local rows, columns = img.height, img.width
+  local cloneImg = img:clone()
+  local filterOffset = math.floor(n / 2)
+  local value = 0
+  local intensity = 0
+  local initial = 255
+  
+  img = il.RGB2YIQ(img)
+  cloneImg = il.RGB2YIQ(cloneImg)
+  
+  for row = n, rows - n - 1 do
+    for col = n, columns - n - 1 do
+      value = img:at(row, col).y
+      
+      for rowFilter = -1 * filterOffset, filterOffset do
+        for colFilter = -1 * filterOffset, filterOffset do
+          intensity = img:at(row - rowFilter, col - colFilter).y
+          
+          if isMin and value > intensity then
+            value = intensity
+          elseif not isMin and value < intensity then
+            value = intensity
+          end
+        end
+      end
+      
+      cloneImg:at(row, col).y = value
+    end
+  end
+  
+  return il.YIQ2RGB(cloneImg)
+end
+
+local function maxFilter(img, n)
+  return minMaxFilter(img, n, false)
+end
+
+local function minFilter(img, n)
+  return minMaxFilter(img, n, true)
+end
+
 return
 {
   smoothing = smoothing,
   sharpen = sharpen,
   medianplus = plusMedianFilter,
-  mean = meanFilter
+  mean = meanFilter,
+  min = minFilter,
+  max = maxFilter
 }
