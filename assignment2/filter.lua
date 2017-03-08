@@ -244,6 +244,47 @@ local function rangeFilter(img, n)
   return il.YIQ2RGB(cloneImg)
 end
 
+local function standardDeviationFilter(img, n)
+  local rows, columns = img.height, img.width
+  local cloneImg = img:clone()
+  local filterOffset = math.floor(n / 2)
+  local sqr = n * n
+  local sum = 0
+  local avg = 0
+  local std = 0
+  local intensity = 0
+  
+  img = il.RGB2YIQ(img)
+  cloneImg = il.RGB2YIQ(cloneImg)
+  
+  for row = n, rows - n - 1 do
+    for col = n, columns - n - 1 do
+      intensity = img:at(row, col).y
+      sum = 0
+      
+      for rowFilter = -1 * filterOffset, filterOffset do
+        for colFilter = -1 * filterOffset, filterOffset do
+          sum = sum + img:at(row + rowFilter, col + colFilter).y
+        end
+      end
+      
+      avg = sum / sqr
+      
+      for rowFilter = -1 * filterOffset, filterOffset do
+        for colFilter = -1 * filterOffset, filterOffset do
+          sum = sum + math.pow(img:at(row + rowFilter, col + colFilter).y - avg, 2)
+        end
+      end
+      
+      std = math.sqrt(sum / sqr)
+      
+      cloneImg:at(row, col).y = std
+    end
+  end
+  
+  return il.YIQ2RGB(cloneImg)
+end
+
 return
 {
   smoothing = smoothing,
@@ -252,5 +293,6 @@ return
   mean = meanFilter,
   min = minFilter,
   max = maxFilter,
-  range = rangeFilter
+  range = rangeFilter,
+  stdDev = standardDeviationFilter
 }
