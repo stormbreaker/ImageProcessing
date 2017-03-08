@@ -6,6 +6,7 @@ local math = require "math"
 
 local function smoothing(img)
   local rows, columns = img.height, img.width
+  local rowCount, colCount
   
   local cloneImg = img:clone()
   
@@ -17,12 +18,13 @@ local function smoothing(img)
   local sum
   
   for row = 1, rows - 2 do
-    print("row"..row)
+    --print("row"..row)
     for column = 1, columns - 2 do
-      print("col"..column)
+      --print("col"..column)
       
       
       sum = 0
+      
       rowCount = row - 1
       for i = 1, 3 do
         colCount = column - 1
