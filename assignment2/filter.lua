@@ -63,7 +63,6 @@ local function sharpen(img)
   
   for row = 0, rows - 1 do
     for column = 0, columns - 1 do
-      --print("col"..column)
       
       
       sum = 0
@@ -96,27 +95,29 @@ local function plusMedianFilter(img)
   local rows, columns = img.height, img.width
   
   local cloneImg = img:clone()
+  local rowCount, colCount
   
   img = il.RGB2YIQ(img)
   cloneImg = il.RGB2YIQ(cloneImg)
   
   local mask = {{0, 1, 0}, {1, 1, 1}, {0, 1, 0}}
   
-  local copyList = {}
+  local reflectedRow = 0
+  local reflectedCol = 0
+  
+
   
   for row = 1, rows - 2 do
     for column = 1, columns - 2 do
-      print("col"..column)
-      
-      
-      sum = 0
+      local copyList = {}
       rowCount = row - 1
       for i = 1, 3 do
         colCount = column - 1
         for j = 1, 3 do
+          reflectedCol, reflectedRow = help.reflection(colCount, rowCount, columns - 1, rows - 1)
           local copyCount = 1
           while copyCount <= mask[i][j] do
-            table.insert(copyList, img:at(rowCount, colCount).y)
+            table.insert(copyList, img:at(reflectedRow, reflectedCol).y)
             copyCount = copyCount + 1
           end
           colCount = colCount + 1
@@ -131,12 +132,6 @@ local function plusMedianFilter(img)
       local length = table.getn(copyList)
       
       median = copyList[2]
-      
-      --[[if length % 2 == 1 then
-        median = copyList[math.ceil(length/2)]
-      else
-        median = math.ceil((copyList[length/2] + copyList[length/2 + 1])/2)
-      end]]
       
       cloneImg:at(row, column).y = median
       
