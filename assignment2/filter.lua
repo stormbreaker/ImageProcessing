@@ -153,16 +153,22 @@ local function meanFilter(img, n)
   local sqr = n * n
   local sum = 0
   
+  local rowMask = 0
+  local colMask = 0
+  
   img = il.RGB2YIQ(img)
   cloneImg = il.RGB2YIQ(cloneImg)
   
-  for row = n, rows - n - 1 do
-    for col = n, columns - n - 1 do
+  for row = 0, rows - 1 do --n, rows - n - 1 do
+    for col = 0, columns - 1  do --n, columns - n - 1 do
       sum = 0
       
       for rowFilter = -1 * filterOffset, filterOffset do
         for colFilter = -1 * filterOffset, filterOffset do
-          sum = sum + img:at(row + rowFilter, col + colFilter).y
+          
+          colMask, rowMask = help.reflection(col - colFilter, row - rowFilter, columns - 1, rows - 1)
+          
+          sum = sum + img:at(rowMask, colMask).y
         end
       end
       
@@ -193,7 +199,7 @@ local function minMaxFilter(img, n, isMin)
       for rowFilter = -1 * filterOffset, filterOffset do 
         for colFilter = -1 * filterOffset, filterOffset do
           colMask, rowMask = help.reflection(col - colFilter, row - rowFilter, columns - 1, rows - 1)
-          intensity = img:at(rowMask, colMask).y--img:at(row - rowFilter, col - colFilter).y
+          intensity = img:at(rowMask, colMask).y
           
           if isMin and value > intensity then
             value = intensity
@@ -226,17 +232,21 @@ local function rangeFilter(img, n)
   local min = 0
   local max = 0
   
+  local rowMask = 0
+  local colMask = 0
+  
   img = il.RGB2YIQ(il.grayscaleYIQ(img))
   cloneImg = il.RGB2YIQ(il.grayscaleYIQ(cloneImg))
   
-  for row = n, rows - n - 1 do
-    for col = n, columns - n - 1 do
+  for row = 0, rows - 1 do --n, rows - n - 1 do
+    for col = 0, columns - 1 do --n, columns - n - 1 do
       min = img:at(row, col).y
       max = min
       
       for rowFilter = -1 * filterOffset, filterOffset do
         for colFilter = -1 * filterOffset, filterOffset do
-          intensity = img:at(row - rowFilter, col - colFilter).y
+          colMask, rowMask = help.reflection(col - colFilter, row - rowFilter, columns - 1, rows - 1)
+          intensity = img:at(rowMask, colMask).y
           
           if min > intensity then
             min = intensity
