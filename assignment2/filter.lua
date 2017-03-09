@@ -273,17 +273,21 @@ local function standardDeviationFilter(img, n)
   local std = 0
   local intensity = 0
   
+  local reflectedRow = 0
+  local reflectedColumn = 0
+  
   img = il.RGB2YIQ(img)
   cloneImg = il.RGB2YIQ(cloneImg)
   
-  for row = n, rows - n - 1 do
-    for col = n, columns - n - 1 do
+  for row = 0, rows - 1 do --n, rows - n - 1 do
+    for col = 0, columns - 1 do --n, columns - n - 1 do
       intensity = img:at(row, col).y
       sum = 0
       
       for rowFilter = -1 * filterOffset, filterOffset do
         for colFilter = -1 * filterOffset, filterOffset do
-          sum = sum + img:at(row + rowFilter, col + colFilter).y
+          reflectedColumn, reflectedRow = help.reflection(col + colFilter, row + rowFilter, columns - 1, rows - 1)
+          sum = sum + img:at(reflectedRow, reflectedColumn).y
         end
       end
       
@@ -291,7 +295,8 @@ local function standardDeviationFilter(img, n)
       
       for rowFilter = -1 * filterOffset, filterOffset do
         for colFilter = -1 * filterOffset, filterOffset do
-          sum = sum + math.pow(img:at(row + rowFilter, col + colFilter).y - avg, 2)
+          reflectedColumn, reflectedRow = help.reflection(col + colFilter, row + rowFilter, columns - 1, rows - 1)
+          sum = sum + math.pow(img:at(reflectedRow, reflectedColumn).y - avg, 2)
         end
       end
       
