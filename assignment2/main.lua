@@ -35,7 +35,8 @@ imageMenu("Filter",
   {"Max", filt.max, {{name = "Max n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
   {"Range", filt.range, {{name = "Range n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
   {"Std Dev", filt.stdDev, {{name = "Std Dev n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
-  {"Emboss", filt.emboss}
+  {"Emboss", filt.emboss},
+  {"Median Filter", filt.median, {{name = "Median n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}}
 })
 
 start()

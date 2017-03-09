@@ -105,10 +105,8 @@ local function plusMedianFilter(img)
   local reflectedRow = 0
   local reflectedCol = 0
   
-
-  
-  for row = 1, rows - 2 do
-    for column = 1, columns - 2 do
+  for row = 0, rows - 1 do
+    for column = 0, columns - 1 do
       local copyList = {}
       rowCount = row - 1
       for i = 1, 3 do
@@ -139,6 +137,44 @@ local function plusMedianFilter(img)
   end
   return il.YIQ2RGB(cloneImg)
 
+end
+
+local function medianFilter(img, n)
+  local rows, columns = img.height, img.width
+  local cloneImg = img:clone()
+  local filterOffset = math.floor(n/2)
+  local reflectedRow = 0;
+  local reflectedColumn = 0
+  local totalCount = n * n
+  local median = 0
+  
+  img = il.RGB2YIQ(img)
+  cloneImg = il.RGB2YIQ(cloneImg)
+  
+  for row = 0, rows - 1 do
+    for col = 0, columns - 1 do
+      local copyList = {}
+      
+      for rowFilter = -1 * filterOffset, filterOffset do
+        for colFilter = -1 * filterOffset, filterOffset do
+          reflectedColumn, reflectedRow = help.reflection(col - colFilter, row - rowFilter, columns - 1, rows - 1)
+          table.insert(copyList, img:at(reflectedRow, reflectedColumn).y)
+        end
+      end
+      
+      table.sort(copyList)
+      
+      if totalCount % 2 == 0 then
+        median = (copyList[totalCount/2] + copyList[totalCount/2 + 1])/2
+      elseif totalCount % 2 == 1 then
+        median = copyList[math.floor(totalCount/2)]
+      end
+      
+      cloneImg:at(row, col).y = median
+      
+    end
+  end
+  return il.YIQ2RGB(cloneImg)
 end
 
 local function meanFilter(img, n)
@@ -360,5 +396,6 @@ return
   max = maxFilter,
   range = rangeFilter,
   stdDev = standardDeviationFilter,
-  emboss = emboss
+  emboss = emboss,
+  median = medianFilter
 }
