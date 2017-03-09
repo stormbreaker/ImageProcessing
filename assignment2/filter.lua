@@ -2,6 +2,7 @@ require "ip"
 
 local il = require "il"
 local math = require "math"
+local help = require "helper"
 
 
 local function smoothing(img)
@@ -15,21 +16,22 @@ local function smoothing(img)
   
   local mask = {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}}
   
+  local reflectedRow  = 0
+  local reflectedColumn = 0
+  
   local sum
   
-  for row = 1, rows - 2 do
-    --print("row"..row)
-    for column = 1, columns - 2 do
-      --print("col"..column)
-      
-      
+  for row = 0, rows - 1 do
+    for column = 0, columns - 1 do
+     
       sum = 0
-      
+   
       rowCount = row - 1
       for i = 1, 3 do
         colCount = column - 1
         for j = 1, 3 do
-          sum = sum + mask[i][j] * img:at(rowCount, colCount).y
+          reflectedColumn, reflectedRow = help.reflection(colCount, rowCount, columns - 1, rows - 1)
+          sum = sum + mask[i][j] * img:at(reflectedRow, reflectedColumn).y
           colCount = colCount + 1
         end
         rowCount = rowCount + 1
@@ -54,11 +56,14 @@ local function sharpen(img)
   
   local mask = {{0, -1, 0}, {-1, 5, -1}, {0, -1, 0}}
   
+  local rowCount, colCount
+  local reflectedRow, reflectedColumn
+  
   local sum
   
-  for row = 1, rows - 2 do
-    for column = 1, columns - 2 do
-      print("col"..column)
+  for row = 0, rows - 1 do
+    for column = 0, columns - 1 do
+      --print("col"..column)
       
       
       sum = 0
@@ -66,7 +71,8 @@ local function sharpen(img)
       for i = 1, 3 do
         colCount = column - 1
         for j = 1, 3 do
-          sum = sum + mask[i][j] * img:at(rowCount, colCount).y
+          reflectedColumn, reflectedRow = help.reflection(colCount, rowCount, columns - 1, rows - 1)
+          sum = sum + mask[i][j] * img:at(reflectedRow, reflectedColumn).y
           colCount = colCount + 1
         end
         rowCount = rowCount + 1
@@ -174,17 +180,20 @@ local function minMaxFilter(img, n, isMin)
   local value = 0
   local intensity = 0
   local initial = 255
+  local rowMask = 0
+  local colMask = 0
   
   img = il.RGB2YIQ(img)
   cloneImg = il.RGB2YIQ(cloneImg)
   
-  for row = n, rows - n - 1 do
-    for col = n, columns - n - 1 do
+  for row = 0, rows - 1 do-- n, rows - n - 1 do -- pixel start
+    for col = 0, columns - 1 do -- n, columns - n - 1 do -- pixel start
       value = img:at(row, col).y
       
-      for rowFilter = -1 * filterOffset, filterOffset do
+      for rowFilter = -1 * filterOffset, filterOffset do 
         for colFilter = -1 * filterOffset, filterOffset do
-          intensity = img:at(row - rowFilter, col - colFilter).y
+          colMask, rowMask = help.reflection(col - colFilter, row - rowFilter, columns - 1, rows - 1)
+          intensity = img:at(rowMask, colMask).y--img:at(row - rowFilter, col - colFilter).y
           
           if isMin and value > intensity then
             value = intensity
