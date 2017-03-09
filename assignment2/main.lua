@@ -36,7 +36,8 @@ imageMenu("Filter",
   {"Range", filt.range, {{name = "Range n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
   {"Std Dev", filt.stdDev, {{name = "Std Dev n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
   {"Emboss", filt.emboss},
-  {"Median Filter", filt.median, {{name = "Median n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}}
+  {"Median Filter", filt.median, {{name = "Median n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
+  {"Out of Range Clean", filt.outofrange, {{name = "Threshold", type = "number", displaytype = "slider", default = 64, min = 0, max = 255}}}
 })
 
 start()
