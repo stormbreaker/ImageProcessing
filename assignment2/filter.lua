@@ -309,6 +309,52 @@ local function standardDeviationFilter(img, n)
   return il.YIQ2RGB(cloneImg)
 end
 
+local function emboss(img)
+  local rows, columns = img.height, img.width
+  local rowCount, colCount
+  
+  local cloneImg = img:clone()
+  
+  img = il.RGB2YIQ(img)
+  cloneImg = il.RGB2YIQ(cloneImg)
+  
+  local mask = {{0, 0, 0}, {0, 1, 0}, {0, 0, -1}}
+  
+  local reflectedRow  = 0
+  local reflectedColumn = 0
+  
+  local sum
+  
+  for row = 0, rows - 1 do
+    for column = 0, columns - 1 do
+     
+      sum = 0
+   
+      rowCount = row - 1
+      for i = 1, 3 do
+        colCount = column - 1
+        for j = 1, 3 do
+          reflectedColumn, reflectedRow = help.reflection(colCount, rowCount, columns - 1, rows - 1)
+          sum = sum + mask[i][j] * img:at(reflectedRow, reflectedColumn).y
+          colCount = colCount + 1
+        end
+        rowCount = rowCount + 1
+      end
+      sum = sum + 128
+      if sum > 255 then
+        sum = 255
+      elseif sum < 0 then
+        sum = 0
+      end
+      cloneImg:at(row, column).y = math.floor(sum)
+    
+      
+    end 
+  end
+  return il.YIQ2RGB(cloneImg)
+  
+end
+
 return
 {
   smoothing = smoothing,
@@ -318,5 +364,6 @@ return
   min = minFilter,
   max = maxFilter,
   range = rangeFilter,
-  stdDev = standardDeviationFilter
+  stdDev = standardDeviationFilter,
+  emboss = emboss
 }
