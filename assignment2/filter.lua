@@ -387,7 +387,56 @@ local function emboss(img)
 end
 
 local function sobelEdge(img, isMagnitude)
-  return img
+  local rows, columns = img.height, img.width
+  
+  local cloneImg = img:clone()
+  
+  local yMask = {{1, 2, 1}, {0 , 0, 0}, {-1, -2, -1}}
+  local xMask = {{1, 0, -1}, {2, 0, -2}, {1, 0, -1}}
+  
+  local G_x, G_y
+  
+  local reflectedRow = 0
+  local reflectedColumn = 0
+  
+  local rowCount = 0
+  local columnCount = 0
+  local result = 0
+  
+  img = il.RGB2YIQ(img)
+  cloneImg = il.RGB2YIQ(cloneImg)
+  
+  for row = 0, rows - 1 do
+    for column = 0, columns - 1 do
+      
+     G_x = 0
+     G_y = 0
+      rowCount = row - 1
+      for i = 1, 3 do
+        columnCount = column - 1
+        for j = 1, 3 do
+          reflectedColumn, reflectedRow = help.reflection(columnCount, rowCount, columns - 1, rows - 1)
+          G_x = G_x + xMask[i][j] * img:at(reflectedRow, reflectedColumn).y
+          G_y = G_y + yMask[i][j] * img:at(reflectedRow, reflectedColumn).y
+          columnCount = columnCount + 1
+        end
+        rowCount = rowCount + 1
+      end
+      
+      if isMagnitude then
+        result = math.sqrt(math.pow(G_x, 2) + math.pow(G_y, 2))
+        result = math.floor(255/360.624458405 * result)
+      else
+        result = math.atan2(G_y,G_x)
+        result = math.floor(255/(2*math.pi)) * result
+      end
+      
+      cloneImg:at(row, column).y = result
+      
+    end
+  end
+  
+  return il.YIQ2RGB(cloneImg)
 end
 
 local function sobelMag(img)
@@ -460,5 +509,7 @@ return
   stdDev = standardDeviationFilter,
   emboss = emboss,
   median = medianFilter,
-  outofrange = outOfRange
+  outofrange = outOfRange,
+  sobelMag = sobelMag,
+  sobelDir = sobelDirection
 }
