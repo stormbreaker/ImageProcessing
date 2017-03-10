@@ -285,6 +285,69 @@ local function standardDeviationFilter(img, n)
   return il.YIQ2RGB(cloneImg)
 end
 
+local function kirschMagnitude(img)
+  local rows, columns = img.height, img.width
+  local filter = {{-3, -3, -3}, {-3, 0, -3}, {5, 5, 5}}
+  local tempFilter = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
+  local calc = 0
+  local maxMag = 0
+  local intensity = 0
+  local imgClone = img:clone()
+  local magnitudes = {}
+  
+  img = il.RGB2YIQ(il.grayscaleYIQ(img))
+  imgClone = il.RGB2YIQ(il.grayscaleYIQ(imgClone))
+  
+  for row = 1, rows - 2 do
+    for col = 1, columns - 2 do
+      maxMag = 0
+      
+      for rotation = 1, 8 do
+        calc = 0
+        
+        for colFilter = -1, 1 do
+          for rowFilter = -1, 1 do
+            calc = calc + filter[colFilter + 2][rowFilter + 2] * img:at(row + rowFilter, col + colFilter).y
+          end
+        end
+        
+        magnitudes[rotation] = calc
+        
+        tempFilter[2][1] = filter[1][1]
+        tempFilter[3][1] = filter[2][1]
+        tempFilter[3][2] = filter[3][1]
+        tempFilter[3][3] = filter[3][2]
+        tempFilter[2][3] = filter[3][3]
+        tempFilter[1][3] = filter[2][3]
+        tempFilter[1][2] = filter[1][3]
+        tempFilter[1][1] = filter[1][2]
+        tempFilter[2][2] = 0
+        
+        for colCopy = 1, 3 do
+          for rowCopy = 1, 3 do
+            filter[colCopy][rowCopy] = tempFilter[colCopy][rowCopy]
+          end
+        end
+      end
+      
+      for i = 1, 8 do
+        maxMag = maxMag + math.pow(magnitudes[i], 2)
+      end
+      
+      maxMag = math.sqrt(maxMag)
+      maxMag = maxMag / 8
+      
+      if maxMag > 255 then
+        maxMag = 255
+      end
+      
+      imgClone:at(row, col).y = maxMag
+    end
+  end
+  
+  return il.YIQ2RGB(imgClone)
+end
+
 return
 {
   smoothing = smoothing,
@@ -294,5 +357,6 @@ return
   min = minFilter,
   max = maxFilter,
   range = rangeFilter,
-  stdDev = standardDeviationFilter
+  stdDev = standardDeviationFilter,
+  kirschMag = kirschMagnitude
 }
