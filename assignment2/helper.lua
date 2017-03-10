@@ -24,8 +24,30 @@ local function reflection(x, y, maxX, maxY)
 end
   
 --print(reflection(1, 1, 5, 5))
+local tempFilter = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
+
+local function rotate45(filter)  
+  tempFilter[2][1] = filter[1][1]
+  tempFilter[3][1] = filter[2][1]
+  tempFilter[3][2] = filter[3][1]
+  tempFilter[3][3] = filter[3][2]
+  tempFilter[2][3] = filter[3][3]
+  tempFilter[1][3] = filter[2][3]
+  tempFilter[1][2] = filter[1][3]
+  tempFilter[1][1] = filter[1][2]
+  tempFilter[2][2] = filter[2][2]
+  
+  for colCopy = 1, 3 do
+    for rowCopy = 1, 3 do
+      filter[colCopy][rowCopy] = tempFilter[colCopy][rowCopy]
+    end
+  end
+  
+  return filter
+end
 
 return 
 {
-  reflection = reflection
+  reflection = reflection,
+  rotate45 = rotate45
 }  

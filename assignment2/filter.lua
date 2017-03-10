@@ -343,7 +343,6 @@ end
 local function kirschMagnitude(img)
   local rows, columns = img.height, img.width
   local filter = {{-3, -3, -3}, {-3, 0, -3}, {5, 5, 5}}
-  local tempFilter = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
   local calc = 0
   local maxMag = 0
   local intensity = 0
@@ -368,21 +367,7 @@ local function kirschMagnitude(img)
         
         magnitudes[rotation] = calc
         
-        tempFilter[2][1] = filter[1][1]
-        tempFilter[3][1] = filter[2][1]
-        tempFilter[3][2] = filter[3][1]
-        tempFilter[3][3] = filter[3][2]
-        tempFilter[2][3] = filter[3][3]
-        tempFilter[1][3] = filter[2][3]
-        tempFilter[1][2] = filter[1][3]
-        tempFilter[1][1] = filter[1][2]
-        tempFilter[2][2] = 0
-        
-        for colCopy = 1, 3 do
-          for rowCopy = 1, 3 do
-            filter[colCopy][rowCopy] = tempFilter[colCopy][rowCopy]
-          end
-        end
+        filter = help.rotate45(filter)
       end
       
       for i = 1, 8 do
