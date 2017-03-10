@@ -428,7 +428,10 @@ local function sobelEdge(img, isMagnitude)
         result = math.floor(255/360.624458405 * result)
       else
         result = math.atan2(G_y,G_x)
-        result = math.floor(255/(2*math.pi)) * result
+        if result < 0 then
+          result = result + 2 * math.pi
+        end
+        result = math.floor(255/(2*math.pi) * (result))
       end
       
       cloneImg:at(row, column).y = result
