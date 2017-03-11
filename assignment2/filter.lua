@@ -552,13 +552,14 @@ local function laplacian(img)
   local rows, columns = img.height, img.width
   local filter = {{-1, -1, -1}, {-1, 8, -1}, {-1, -1, -1}}
   local imgClone = img:clone()
+  local sum = 0
   
   img = il.RGB2YIQ(img)
   imgClone = il.RGB2YIQ(imgClone)
   
   for row = 2, rows - 2 do
     for col = 2, columns - 2 do
-      local sum = 0
+      sum = 0
       
       for colFilter = -1, 1 do
         for rowFilter = -1, 1 do
