@@ -342,22 +342,27 @@ end
 
 local function kirschMagnitude(img)
   local rows, columns = img.height, img.width
-  local filter = {{-3, -3, -3}, {-3, 0, -3}, {5, 5, 5}}
-  local calc = 0
+  local filter = {{-3, -3, 5}, {-3, 0, 5}, {-3, -3, -3}}
   local maxMag = 0
   local intensity = 0
   local imgClone = img:clone()
+  local imgDir = img:clone()
   local magnitudes = {}
+  local directionalIntensity
   
-  img = il.RGB2YIQ(il.grayscaleYIQ(img))
-  imgClone = il.RGB2YIQ(il.grayscaleYIQ(imgClone))
+  il.RGB2YIQ(img) --il.grayscaleYIQ(img))
+  imgClone = img:clone()--il.grayscaleYIQ(imgClone))
+  imgDir = img:clone()
+  
   
   for row = 1, rows - 2 do
     for col = 1, columns - 2 do
       maxMag = 0
-      
+      directionalIntensity = 0
+  
       for rotation = 1, 8 do
         calc = 0
+
         
         for colFilter = -1, 1 do
           for rowFilter = -1, 1 do
@@ -367,12 +372,14 @@ local function kirschMagnitude(img)
         
         magnitudes[rotation] = calc
         
-        filter = help.rotate45(filter)
+        filter = help.rot(rotation-1)--help.rotate45(filter)
       end
+      
       
       for i = 1, 8 do
         if magnitudes[i] > maxMag then
           maxMag = magnitudes[i]
+          directionalIntensity = math.floor((i-1)/8 * 256)
         end
         --maxMag = maxMag + math.pow(magnitudes[i], 2)
       end
@@ -381,16 +388,29 @@ local function kirschMagnitude(img)
       --maxMag = maxMag / 8
       
       maxMag = maxMag/3
+      --print(directionIntensity)
       
       if maxMag > 255 then
         maxMag = 255
       end
+      if directionalIntensity > 255 then
+        directionalIntensity = 255
+      end
+      if directionalIntensity < 0 then
+        directionalIntensity = 0
+      end
+      
+      imgDir:at(row, col).y = directionalIntensity
+      imgDir:at(row, col).g = 128
+      imgDir:at(row, col).b = 128
       
       imgClone:at(row, col).y = maxMag
+      imgClone:at(row, col).g = 128
+      imgClone:at(row, col).b = 128
     end
   end
   
-  return il.YIQ2RGB(imgClone)
+  return il.YIQ2RGB(imgClone), il.YIQ2RGB(imgDir)
 end
 
 local function emboss(img)
