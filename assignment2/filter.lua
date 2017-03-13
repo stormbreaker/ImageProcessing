@@ -371,11 +371,16 @@ local function kirschMagnitude(img)
       end
       
       for i = 1, 8 do
-        maxMag = maxMag + math.pow(magnitudes[i], 2)
+        if magnitudes[i] > maxMag then
+          maxMag = magnitudes[i]
+        end
+        --maxMag = maxMag + math.pow(magnitudes[i], 2)
       end
       
-      maxMag = math.sqrt(maxMag)
-      maxMag = maxMag / 8
+      --maxMag = math.sqrt(maxMag)
+      --maxMag = maxMag / 8
+      
+      maxMag = maxMag/3
       
       if maxMag > 255 then
         maxMag = 255
