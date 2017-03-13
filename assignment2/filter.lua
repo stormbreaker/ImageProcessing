@@ -440,7 +440,7 @@ local function sobelEdge(img, isMagnitude)
   local cloneImg = img:clone()
   
   local yMask = {{1, 2, 1}, {0 , 0, 0}, {-1, -2, -1}}
-  local xMask = {{1, 0, -1}, {2, 0, -2}, {1, 0, -1}}
+  local xMask = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}}
   
   local G_x, G_y
   
@@ -479,10 +479,12 @@ local function sobelEdge(img, isMagnitude)
         if result < 0 then
           result = result + 2 * math.pi
         end
-        result = math.floor(255/(2*math.pi) * (result))
+        result = math.floor(256 * (result)/(2*math.pi))
       end
       
-      cloneImg:at(row, column).y = result
+      cloneImg:at(row, column).r = result
+      cloneImg:at(row, column).g = 128
+      cloneImg:at(row, column).b = 128
       
     end
   end
