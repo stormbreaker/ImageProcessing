@@ -340,9 +340,9 @@ local function standardDeviationFilter(img, n)
   return il.YIQ2RGB(cloneImg)
 end
 
-local function kirschMagnitude(img)
+local function kirschMagnitudeDirection(img)
   local rows, columns = img.height, img.width
-  local filter = {{-3, -3, 5}, {-3, 0, 5}, {-3, -3, 5}}
+  local filter = {{-3, -3, -3}, {-3, 0, -3}, {5, 5, 5}}
   local maxMag = 0
   local intensity = 0
   local imgClone = img:clone()
@@ -350,10 +350,8 @@ local function kirschMagnitude(img)
   local magnitudes = {}
   local directionalIntensity
   
-  il.RGB2YIQ(img) --il.grayscaleYIQ(img))
-  imgClone = img:clone()--il.grayscaleYIQ(imgClone))
-  imgDir = img:clone()
-  
+  imgClone = il.RGB2YIQ(imgClone)
+  imgDir = il.RGB2YIQ(imgDir)
   
   for row = 1, rows - 2 do
     for col = 1, columns - 2 do
@@ -363,7 +361,6 @@ local function kirschMagnitude(img)
       for rotation = 1, 8 do
         calc = 0
 
-        
         for colFilter = -1, 1 do
           for rowFilter = -1, 1 do
             calc = calc + filter[colFilter + 2][rowFilter + 2] * img:at(row + rowFilter, col + colFilter).y
@@ -375,24 +372,24 @@ local function kirschMagnitude(img)
         filter = help.rotate45(filter)
       end
       
-      
       for i = 1, 8 do
         if magnitudes[i] > maxMag then
           maxMag = magnitudes[i]
-          directionalIntensity = math.floor((i-1)/8 * 256)
+          directionalIntensity = math.floor((8 - i)/8 * 256)
         end
       end
-      
       
       maxMag = maxMag/3
       
       if maxMag > 255 then
         maxMag = 255
+      elseif maxMag < 0 then
+        maxMag = 0
       end
+      
       if directionalIntensity > 255 then
         directionalIntensity = 255
-      end
-      if directionalIntensity < 0 then
+      elseif directionalIntensity < 0 then
         directionalIntensity = 0
       end
       
@@ -406,7 +403,7 @@ local function kirschMagnitude(img)
     end
   end
   
-  return il.YIQ2RGB(imgClone), il.YIQ2RGB(imgDir)
+  return img, il.YIQ2RGB(imgClone), il.YIQ2RGB(imgDir)
 end
 
 local function emboss(img)
@@ -613,7 +610,7 @@ return
   max = maxFilter,
   range = rangeFilter,
   stdDev = standardDeviationFilter,
-  kirschMag = kirschMagnitude,
+  kirschMagDir = kirschMagnitudeDirection,
   laplacian = laplacian,
   emboss = emboss,
   median = medianFilter,

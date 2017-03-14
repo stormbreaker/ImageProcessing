@@ -3,6 +3,8 @@ require "ip"
 local il = require "il"
 local math = require "math"
 
+local tempFilter = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
+
 local function reflection(x, y, maxX, maxY)
   
   while ((x < 0 or x > maxX) or (y < 0 or y > maxY)) do
@@ -27,7 +29,6 @@ end
 
 
 local function rotate45(filter)
-  local tempFilter = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
   tempFilter[2][1] = filter[1][1]
   tempFilter[3][1] = filter[2][1]
   tempFilter[3][2] = filter[3][1]
@@ -38,13 +39,13 @@ local function rotate45(filter)
   tempFilter[1][1] = filter[1][2]
   --tempFilter[2][2] = filter[2][2]
   
-  --[[for colCopy = 1, 3 do
+  for colCopy = 1, 3 do
     for rowCopy = 1, 3 do
       filter[colCopy][rowCopy] = tempFilter[colCopy][rowCopy]
     end
-  end]]
+  end
   
-  return tempFilter
+  return filter
 end
 
 function rotate_kirsch( rot )
