@@ -342,7 +342,7 @@ end
 
 local function kirschMagnitude(img)
   local rows, columns = img.height, img.width
-  local filter = {{-3, -3, 5}, {-3, 0, 5}, {-3, -3, -3}}
+  local filter = {{-3, -3, 5}, {-3, 0, 5}, {-3, -3, 5}}
   local maxMag = 0
   local intensity = 0
   local imgClone = img:clone()
@@ -372,7 +372,7 @@ local function kirschMagnitude(img)
         
         magnitudes[rotation] = calc
         
-        filter = help.rot(rotation-1)--help.rotate45(filter)
+        filter = help.rotate45(filter)
       end
       
       
@@ -381,14 +381,10 @@ local function kirschMagnitude(img)
           maxMag = magnitudes[i]
           directionalIntensity = math.floor((i-1)/8 * 256)
         end
-        --maxMag = maxMag + math.pow(magnitudes[i], 2)
       end
       
-      --maxMag = math.sqrt(maxMag)
-      --maxMag = maxMag / 8
       
       maxMag = maxMag/3
-      --print(directionIntensity)
       
       if maxMag > 255 then
         maxMag = 255
