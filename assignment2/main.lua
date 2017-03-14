@@ -5,7 +5,7 @@ local filt = require "filter"
 
 local cmarg2 = {name = "color model", type = "string", displaytype = "combo", choices = {"yiq", "yuv", "ihs"}, default = "yiq"}
 
-imageMenu("Convienence Functions", 
+imageMenu("Convenience Functions", 
 {
   {"Grayscale", il.grayscaleYIQ, hotkey = "C-M"},
   {"Display Histogram", il.showHistogram,
