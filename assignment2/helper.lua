@@ -39,9 +39,9 @@ local function rotate45(filter)
   tempFilter[1][1] = filter[1][2]
   --tempFilter[2][2] = filter[2][2]
   
-  for colCopy = 1, 3 do
-    for rowCopy = 1, 3 do
-      filter[colCopy][rowCopy] = tempFilter[colCopy][rowCopy]
+  for rowCopy = 1, 3 do
+    for colCopy = 1, 3 do
+      filter[rowCopy][colCopy] = tempFilter[rowCopy][colCopy]
     end
   end
   

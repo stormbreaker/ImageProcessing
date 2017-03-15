@@ -42,7 +42,8 @@ imageMenu("Filter",
   {"Out of Range Clean", filt.outofrange, {{name = "Threshold", type = "number", displaytype = "slider", default = 64, min = 0, max = 255}}},
   {"Sobel Magnitude", filt.sobelMag},
   {"Sobel Direction", filt.sobelDir},
-  {"weiss kirsch", il.kirsch}
+  {"weiss kirsch", il.kirsch},
+  {"pseudo", il.pseudocolor2}
 })
 
 start()
