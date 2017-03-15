@@ -4,7 +4,10 @@ local il = require "il"
 local math = require "math"
 local help = require "helper"
 
-
+--[[
+Author: Benjamin Kaiser
+Description: 
+]]
 local function smoothing(img)
   local rows, columns = img.height, img.width
   local rowCount, colCount
@@ -46,6 +49,10 @@ local function smoothing(img)
   
 end
 
+--[[
+Author: Benjamin Kaiser
+Description: 
+]]
 local function sharpen(img)
   local rows, columns = img.height, img.width
   
@@ -91,6 +98,10 @@ local function sharpen(img)
   return il.YIQ2RGB(cloneImg)
 end
 
+--[[
+Author: Benjamin Kaiser
+Description: 
+]]
 local function plusMedianFilter(img)
   local rows, columns = img.height, img.width
   
@@ -139,6 +150,10 @@ local function plusMedianFilter(img)
 
 end
 
+--[[
+Author: Benjamin Kaiser
+Description: 
+]]
 local function medianFilter(img, n)
   local rows, columns = img.height, img.width
   local cloneImg = img:clone()
@@ -177,6 +192,10 @@ local function medianFilter(img, n)
   return il.YIQ2RGB(cloneImg)
 end
 
+--[[
+Author: Taylor Doell
+Description: 
+]]
 local function meanFilter(img, n)
   local rows, columns = img.height, img.width
   local cloneImg = img:clone()
@@ -210,6 +229,10 @@ local function meanFilter(img, n)
   return il.YIQ2RGB(cloneImg)
 end
 
+--[[
+Author: Taylor Doell
+Description: 
+]]
 local function minMaxFilter(img, n, isMin)
   local rows, columns = img.height, img.width
   local cloneImg = img:clone()
@@ -247,14 +270,26 @@ local function minMaxFilter(img, n, isMin)
   return il.YIQ2RGB(cloneImg)
 end
 
+--[[
+Author: Taylor Doell
+Description: 
+]]
 local function maxFilter(img, n)
   return minMaxFilter(img, n, false)
 end
 
+--[[
+Author: Taylor Doell
+Description: 
+]]
 local function minFilter(img, n)
   return minMaxFilter(img, n, true)
 end
 
+--[[
+Author: Taylor Doell
+Description: 
+]]
 local function rangeFilter(img, n)
   local rows, columns = img.height, img.width
   local cloneImg = img:clone()
@@ -294,6 +329,10 @@ local function rangeFilter(img, n)
   return il.YIQ2RGB(cloneImg)
 end
 
+--[[
+Author: Taylor Doell
+Description: 
+]]
 local function standardDeviationFilter(img, n)
   local rows, columns = img.height, img.width
   local cloneImg = img:clone()
@@ -340,6 +379,10 @@ local function standardDeviationFilter(img, n)
   return il.YIQ2RGB(cloneImg)
 end
 
+--[[
+Author: Taylor Doell
+Description: 
+]]
 local function kirschMagnitudeDirection(img)
   local rows, columns = img.height, img.width
   local filter = {{-3, -3, 5}, {-3,  0, 5}, {-3, -3, 5}}
@@ -405,6 +448,10 @@ local function kirschMagnitudeDirection(img)
   return il.YIQ2RGB(img), il.YIQ2RGB(imgClone), il.YIQ2RGB(imgDir)
 end
 
+--[[
+Author: Benjamin Kaiser
+Description: 
+]]
 local function emboss(img)
   local rows, columns = img.height, img.width
   local rowCount, colCount
@@ -451,6 +498,10 @@ local function emboss(img)
   
 end
 
+--[[
+Author: Benjamin Kaiser
+Description: 
+]]
 local function sobelEdge(img, isMagnitude)
   local rows, columns = img.height, img.width
   
@@ -509,14 +560,26 @@ local function sobelEdge(img, isMagnitude)
   return il.YIQ2RGB(cloneImg)
 end
 
+--[[
+Author: Benjamin Kaiser
+Description: 
+]]
 local function sobelMag(img)
   return sobelEdge(img, true)
 end
- 
+
+ --[[
+Author: Benjamin Kaiser
+Description: 
+]]
 local function sobelDirection(img)
    return sobelEdge(img, false)
 end
 
+--[[
+Author: Benjamin Kaiser
+Description: 
+]]
 local function outOfRange(img, threshold)
   local rows, columns = img.height, img.width
   local rowCount, columnCount
@@ -567,6 +630,10 @@ local function outOfRange(img, threshold)
   
 end
 
+--[[
+Author: Taylor Doell
+Description: 
+]]
 local function laplacian(img)
   local rows, columns = img.height, img.width
   local filter = {{-1, -1, -1}, {-1, 8, -1}, {-1, -1, -1}}
