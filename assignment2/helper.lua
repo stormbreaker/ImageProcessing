@@ -5,6 +5,10 @@ local math = require "math"
 
 local tempFilter = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
 
+--[[
+Author: Benjamin Kaiser
+Description: 
+]]
 local function reflection(x, y, maxX, maxY)
   
   while ((x < 0 or x > maxX) or (y < 0 or y > maxY)) do
@@ -24,10 +28,11 @@ local function reflection(x, y, maxX, maxY)
   
   return x, y
 end
-  
---print(reflection(1, 1, 5, 5))
 
-
+--[[
+Author: Taylor Doell
+Description: 
+]]
 local function rotate45(filter)
   tempFilter[2][1] = filter[1][1]
   tempFilter[3][1] = filter[2][1]
@@ -48,61 +53,9 @@ local function rotate45(filter)
   return filter
 end
 
-function rotate_kirsch( rot )
-  if rot == 0 then --East
-    return {
-      {-3,-3, 5},
-      {-3, 0, 5},
-      {-3,-3, 5}
-    }
-  elseif rot == 1 then --North East
-    return {
-      {-3, 5, 5},
-      {-3, 0, 5},
-      {-3,-3,-3}
-    }
-  elseif rot == 2 then --North
-    return {
-      { 5, 5, 5},
-      {-3, 0,-3},
-      {-3,-3,-3}
-    }
-  elseif rot == 3 then --North West
-    return {
-      { 5, 5,-3},
-      { 5, 0,-3},
-      {-3,-3,-3}
-    }
-  elseif rot == 4 then  --West
-    return {
-      {5,-3,-3},
-      {5, 0,-3},
-      {5,-3,-3}
-    }
-  elseif rot == 5 then --South West
-    return {
-      {-3,-3,-3},
-      { 5, 0,-3},
-      { 5, 5,-3}
-    }
-  elseif rot == 6 then --South
-    return {
-      {-3,-3,-3},
-      {-3, 0,-3},
-      { 5, 5, 5}
-    }
-  else              --South East
-    return {
-      {-3,-3,-3},
-      {-3, 0, 5},
-      {-3, 5, 5}
-    }
-  end
-end
 
 return 
 {
   reflection = reflection,
-  rotate45 = rotate45,
-  rot = rotate_kirsch
+  rotate45 = rotate45
 }  
