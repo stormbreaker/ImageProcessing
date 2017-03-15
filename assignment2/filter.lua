@@ -342,9 +342,7 @@ end
 
 local function kirschMagnitudeDirection(img)
   local rows, columns = img.height, img.width
-  local filter = {{-3, -3, 5}, 
-                  {-3,  0, 5}, 
-                  {-3, -3, 5}}
+  local filter = {{-3, -3, 5}, {-3,  0, 5}, {-3, -3, 5}}
   local maxMag = 0
   local intensity = 0
   local imgClone = img:clone()
