@@ -2,6 +2,8 @@ require "ip"
 local viz = require"visual"
 local il = require "il"
 local filt = require "filter"
+local edge = require "edges"
+local noise = require "noise"
 
 local cmarg2 = {name = "color model", type = "string", displaytype = "combo", choices = {"yiq", "yuv", "ihs"}, default = "yiq"}
 
@@ -23,16 +25,17 @@ imageMenu("Convenience Functions",
 
 imageMenu("Edge Detection", 
 {
-  {"Kirsch Magnitude / Direction", filt.kirschMagDir},
-  {"Sobel Magnitude", filt.sobelMag},
-  {"Sobel Direction", filt.sobelDir} 
+  {"Kirsch Magnitude / Direction", edge.kirschMagDir},
+  {"Sobel Magnitude", edge.sobelMag},
+  {"Sobel Direction", edge.sobelDir},
+  {"Laplacian", edge.laplacian}
 })
 
 imageMenu("Noise", 
 {
-  {"Out of Range Clean", filt.outofrange, {{name = "Threshold", type = "number", displaytype = "slider", default = 64, min = 0, max = 255}}},
-  {"Median Filter", filt.median, {{name = "Median n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
-  {"Median+", filt.medianplus}
+  {"Out of Range Clean", noise.outofrange, {{name = "Threshold", type = "number", displaytype = "slider", default = 64, min = 0, max = 255}}},
+  {"Median Filter", noise.median, {{name = "Median n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
+  {"Median+", noise.medianplus}
 })
 
 imageMenu("Filter", 
@@ -44,7 +47,6 @@ imageMenu("Filter",
   {"Max", filt.max, {{name = "Max n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
   {"Range", filt.range, {{name = "Range n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
   {"Std Dev", filt.stdDev, {{name = "Std Dev n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
-  {"Laplacian", filt.laplacian},
   {"Emboss", filt.emboss},
 
 })

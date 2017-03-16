@@ -59,7 +59,7 @@ local function rotate45(filter)
   return filter
 end
 
--- Expose methods in order to call from filter.lua
+-- Expose methods in order to call from other files
 return 
 {
   reflection = reflection,
