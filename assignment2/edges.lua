@@ -55,19 +55,32 @@ local function laplacian(img)
 end
 
 --[[
-Author: Benjamin Kaiser
-Description: 
+  Author: Benjamin Kaiser
+  Description: This function takes an image and a boolean flag which tells it whether to
+  compute the magnitude of the edge or the direction of the edge.
+  Either way, the function loops through the image pixel by pixel and for
+  each pixel it computes the x and y gradient components by applying the
+  x and y masks.  Then depending on whether or not the flag is set it
+  sets the new intensity values to either magnitude or direction representations.  
+  Magnitude is done by taking the square root of the sum of the squares of the components
+  Direction is done by taking the arctan of the y component divided by the x component.  
+  If the value is negative, 2 * pi is added to do an offset.  
+  The value is then mapped from this value into the 0 to 255 range.  
+  After this is done, clipping occurs and the value is returned. 
 ]]
 local function sobelEdge(img, isMagnitude)
   local rows, columns = img.height, img.width
   
   local cloneImg = img:clone()
   
+  --sobel masks
   local yMask = {{1, 2, 1}, {0 , 0, 0}, {-1, -2, -1}}
   local xMask = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}}
   
+  --variables for my gradient components
   local G_x, G_y
   
+  --variables for reflected rows
   local reflectedRow = 0
   local reflectedColumn = 0
   
@@ -78,15 +91,19 @@ local function sobelEdge(img, isMagnitude)
   img = il.RGB2YIQ(img)
   cloneImg = il.RGB2YIQ(cloneImg)
   
+  --process the image
   for row = 0, rows - 1 do
     for column = 0, columns - 1 do
       
      G_x = 0
      G_y = 0
+     
+     --loop filter and compute Gx and Gy
       rowCount = row - 1
       for i = 1, 3 do
         columnCount = column - 1
         for j = 1, 3 do
+          --find reflection
           reflectedColumn, reflectedRow = help.reflection(columnCount, rowCount, columns - 1, rows - 1)
           
           G_x = G_x + xMask[i][j] * img:at(reflectedRow, reflectedColumn).y
@@ -97,16 +114,21 @@ local function sobelEdge(img, isMagnitude)
         rowCount = rowCount + 1
       end
       
+      --compute magnitude
       if isMagnitude then
         result = math.sqrt((G_x * G_x) + (G_y * G_y))
+      --compute direction
       else
         result = math.atan2(G_y,G_x)
+        --do recentering
         if result < 0 then
           result = result + 2 * math.pi
         end
+        --scale
         result = math.floor(256 * (result)/(2*math.pi))
       end
       
+      --clip
       if result > 255 then
         result = 255
       elseif result < 0 then
@@ -114,6 +136,7 @@ local function sobelEdge(img, isMagnitude)
       end
       
       cloneImg:at(row, column).r = result
+      --grayscale stuff
       cloneImg:at(row, column).g = 128
       cloneImg:at(row, column).b = 128
       
