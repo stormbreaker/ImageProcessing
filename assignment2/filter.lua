@@ -1,3 +1,7 @@
+--[[
+  Authors: Benjamin Kaiser and Taylor Doell
+  Description:  This function handles all of the functions for general neighborhood processes.  
+]]
 require "ip"
 
 local il = require "il"
@@ -6,7 +10,13 @@ local help = require "helper"
 
 --[[
 Author: Benjamin Kaiser
-Description: 
+Description: This function takes an image and smooths it.  To do this,
+it loops through the entire image using reflection to handle borders.  
+For each pixel in the image, a mask is looped through and convolved
+with the image.  This means that for each filter, we multiply the value in
+the filter with the intensity of the pixel that it overlays.
+These are all added together and the average of these values is then 
+set into the pixel which is being worked on currently.  
 ]]
 local function smoothing(img)
   local rows, columns = img.height, img.width
@@ -17,22 +27,27 @@ local function smoothing(img)
   img = il.RGB2YIQ(img)
   cloneImg = il.RGB2YIQ(cloneImg)
   
+  --smoothing mask
   local mask = {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}}
   
+  --reflection coordinates
   local reflectedRow  = 0
   local reflectedColumn = 0
   
   local sum
   
+  --process image
   for row = 0, rows - 1 do
     for column = 0, columns - 1 do
      
       sum = 0
    
+      --loop filter
       rowCount = row - 1
       for i = 1, 3 do
         colCount = column - 1
         for j = 1, 3 do
+          --compute reflected coordinates
           reflectedColumn, reflectedRow = help.reflection(colCount, rowCount, columns - 1, rows - 1)
           sum = sum + mask[i][j] * img:at(reflectedRow, reflectedColumn).y
           colCount = colCount + 1
@@ -42,7 +57,6 @@ local function smoothing(img)
       
       cloneImg:at(row, column).y = math.floor(sum/16)
     
-      
     end 
   end
   return il.YIQ2RGB(cloneImg)
@@ -51,7 +65,12 @@ end
 
 --[[
 Author: Benjamin Kaiser
-Description: 
+Description: This function takes an image and sharpens it.  To do this,
+it loops through the entire image using reflection to handle borders.  
+For each pixel in the image, a mask is looped through and convolved
+with the image.  This means that for each filter, we multiply the value in
+the filter with the intensity of the pixel that it overlays.
+These are all added together and then the resulting value is clipped to the 0 to 255 range 
 ]]
 local function sharpen(img)
   local rows, columns = img.height, img.width
@@ -61,22 +80,27 @@ local function sharpen(img)
   img = il.RGB2YIQ(img)
   cloneImg = il.RGB2YIQ(cloneImg)
   
+  --sharpening mask
   local mask = {{0, -1, 0}, {-1, 5, -1}, {0, -1, 0}}
   
+  --variables to handle reflection
   local rowCount, colCount
   local reflectedRow, reflectedColumn
   
   local sum
   
+  --process image
   for row = 0, rows - 1 do
     for column = 0, columns - 1 do
       
       
       sum = 0
+      --loop filter
       rowCount = row - 1
       for i = 1, 3 do
         colCount = column - 1
         for j = 1, 3 do
+          --compute reflected coordiantes
           reflectedColumn, reflectedRow = help.reflection(colCount, rowCount, columns - 1, rows - 1)
           sum = sum + mask[i][j] * img:at(reflectedRow, reflectedColumn).y
           colCount = colCount + 1
@@ -84,7 +108,7 @@ local function sharpen(img)
         rowCount = rowCount + 1
       end
       
-      
+      --clip
       if sum > 255 then
         sum = 255
       elseif sum < 0 then
@@ -95,6 +119,7 @@ local function sharpen(img)
       
     end 
   end
+  
   return il.YIQ2RGB(cloneImg)
 end
 
@@ -323,7 +348,11 @@ end
 
 --[[
 Author: Benjamin Kaiser
-Description: 
+Description: This function takes an image and does an
+embossing effect.  It loops through the image pixel by pixel.
+On each pixel it convolves a mask which is defined in the function
+The sum is computed of this convolution and this is then set to the pixel
+that is currently being worked on after it is offset and brightened by 128
 ]]
 local function emboss(img)
   local rows, columns = img.height, img.width
@@ -334,36 +363,44 @@ local function emboss(img)
   img = il.RGB2YIQ(img)
   cloneImg = il.RGB2YIQ(cloneImg)
   
+  --emboss mask
   local mask = {{0, 0, 0}, {0, 1, 0}, {0, 0, -1}}
   
+  --variables to handle reflection
   local reflectedRow  = 0
   local reflectedColumn = 0
   
   local sum
-  
+ 
+  -- process image
   for row = 0, rows - 1 do
     for column = 0, columns - 1 do
      
       sum = 0
    
+      --loop filter
       rowCount = row - 1
       for i = 1, 3 do
         colCount = column - 1
         for j = 1, 3 do
+          --compute reflected coordiantes
           reflectedColumn, reflectedRow = help.reflection(colCount, rowCount, columns - 1, rows - 1)
           sum = sum + mask[i][j] * img:at(reflectedRow, reflectedColumn).y
           colCount = colCount + 1
         end
         rowCount = rowCount + 1
       end
+      
+      --offset and clip
       sum = sum + 128
+      
       if sum > 255 then
         sum = 255
       elseif sum < 0 then
         sum = 0
       end
+      
       cloneImg:at(row, column).y = math.floor(sum)
-    
       
     end 
   end
