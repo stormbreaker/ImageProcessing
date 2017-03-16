@@ -21,29 +21,32 @@ imageMenu("Convenience Functions",
       {{name = "probability", type = "number", displaytype = "slider", default = 64, min = 0, max = 1000}}}
 })
 
-imageMenu("Edge Detection", {})
+imageMenu("Edge Detection", 
+{
+  {"Kirsch Magnitude / Direction", filt.kirschMagDir},
+  {"Sobel Magnitude", filt.sobelMag},
+  {"Sobel Direction", filt.sobelDir} 
+})
 
-imageMenu("Noise", {})
+imageMenu("Noise", 
+{
+  {"Out of Range Clean", filt.outofrange, {{name = "Threshold", type = "number", displaytype = "slider", default = 64, min = 0, max = 255}}},
+  {"Median Filter", filt.median, {{name = "Median n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
+  {"Median+", filt.medianplus}
+})
 
 imageMenu("Filter", 
 {
   {"3x3 Smoothing", filt.smoothing},
   {"3x3 Sharpen", filt.sharpen},
-  {"Median+", filt.medianplus},
   {"Mean", filt.mean, {{name = "Mean n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
   {"Min", filt.min, {{name = "Min n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
   {"Max", filt.max, {{name = "Max n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
   {"Range", filt.range, {{name = "Range n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
   {"Std Dev", filt.stdDev, {{name = "Std Dev n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
-  {"Kirsch Magnitude / Direction", filt.kirschMagDir},
   {"Laplacian", filt.laplacian},
   {"Emboss", filt.emboss},
-  {"Median Filter", filt.median, {{name = "Median n x n", type = "number", displaytype = "spin", default = 3, min = 3, max = 255}}},
-  {"Out of Range Clean", filt.outofrange, {{name = "Threshold", type = "number", displaytype = "slider", default = 64, min = 0, max = 255}}},
-  {"Sobel Magnitude", filt.sobelMag},
-  {"Sobel Direction", filt.sobelDir},
-  {"weiss kirsch", il.kirsch},
-  {"pseudo", il.pseudocolor2}
+
 })
 
 start()
