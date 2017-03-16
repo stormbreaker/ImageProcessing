@@ -1,3 +1,8 @@
+--[[
+  Authors: Benjamin Kaiser and Taylor Doell
+  Description:  This file handles all of the edge detection functions for our program.  
+]]
+
 require "ip"
 
 local il = require "il"
@@ -120,7 +125,9 @@ end
 
 --[[
 Author: Benjamin Kaiser
-Description: 
+Description: This function is just a wrapper function for the sobelEdge function
+and it passes the image that it received along with a true flag indicating that the
+sobel edge function should return the magnitude.
 ]]
 local function sobelMag(img)
   return sobelEdge(img, true)
@@ -128,7 +135,9 @@ end
 
  --[[
 Author: Benjamin Kaiser
-Description: 
+Description: This function is just a wrapper function for the sobelEdge function
+and it passes the image that it received along with a false flag indicating that the
+sobel edge function should return the direction
 ]]
 local function sobelDirection(img)
    return sobelEdge(img, false)
