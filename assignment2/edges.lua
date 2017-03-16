@@ -238,7 +238,6 @@ local function kirschMagnitudeDirection(img)
         directionalIntensity = 0
       end
       
-      
       -- Set value in appropriate image
       imgDir:at(row, col).y = directionalIntensity
       imgDir:at(row, col).g = 128
