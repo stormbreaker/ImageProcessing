@@ -3,6 +3,7 @@ require "ip"
 local il = require "il"
 local math = require "math"
 
+-- This table is here for performance reasons in the rotate function
 local tempFilter = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
 
 --[[
@@ -31,9 +32,14 @@ end
 
 --[[
 Author: Taylor Doell
-Description: 
+Description: This function uses a local table that is only global
+  to this file and uses it to rotate the filter 45 degrees. At the
+  end we copy the filter values back into the filter passed in to
+  prevent using the same reference and ruining the filter. Once the
+  table is copied, it is returned to the caller.
 ]]
 local function rotate45(filter)
+  -- Rotate filter by hand
   tempFilter[2][1] = filter[1][1]
   tempFilter[3][1] = filter[2][1]
   tempFilter[3][2] = filter[3][1]
@@ -42,8 +48,8 @@ local function rotate45(filter)
   tempFilter[1][3] = filter[2][3]
   tempFilter[1][2] = filter[1][3]
   tempFilter[1][1] = filter[1][2]
-  --tempFilter[2][2] = filter[2][2]
   
+  -- Copy filter to prevent using the same reference
   for rowCopy = 1, 3 do
     for colCopy = 1, 3 do
       filter[rowCopy][colCopy] = tempFilter[rowCopy][colCopy]
