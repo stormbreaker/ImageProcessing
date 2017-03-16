@@ -6,6 +6,8 @@
   application and adds all of the menu items onto the GUI along with
   their associated callback functions.  This is based on lip.lua which
   was created by Dr. Weiss and Alex Iverson
+  
+  Extra Credit attempts: Reflection
 ]]
 
 -- LuaIP image processing routines

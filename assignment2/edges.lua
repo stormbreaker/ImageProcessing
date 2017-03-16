@@ -83,8 +83,10 @@ local function sobelEdge(img, isMagnitude)
         columnCount = column - 1
         for j = 1, 3 do
           reflectedColumn, reflectedRow = help.reflection(columnCount, rowCount, columns - 1, rows - 1)
+          
           G_x = G_x + xMask[i][j] * img:at(reflectedRow, reflectedColumn).y
           G_y = G_y + yMask[i][j] * img:at(reflectedRow, reflectedColumn).y
+          
           columnCount = columnCount + 1
         end
         rowCount = rowCount + 1
