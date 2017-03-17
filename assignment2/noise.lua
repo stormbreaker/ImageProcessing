@@ -202,7 +202,7 @@ local function medianFilter(img, n)
   return il.YIQ2RGB(cloneImg)
 end
 
--- expose functions to call in main.lua
+-- Expose functions to call in main.lua
 return
 {
   outofrange = outOfRange,

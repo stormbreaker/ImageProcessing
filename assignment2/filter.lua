@@ -364,10 +364,10 @@ local function emboss(img)
   cloneImg = il.RGB2YIQ(cloneImg)
   
   --emboss mask
-  local mask = {{0, 0, 0}, {0, 1, 0}, {0, 0, -1}}
+  local mask = {{0, 0, 0}, {0, 2, 0}, {0, 0, -2}}
   
   --variables to handle reflection
-  local reflectedRow  = 0
+  local reflectedRow = 0
   local reflectedColumn = 0
   
   local sum
@@ -375,19 +375,23 @@ local function emboss(img)
   -- process image
   for row = 0, rows - 1 do
     for column = 0, columns - 1 do
-     
       sum = 0
    
       --loop filter
       rowCount = row - 1
+      
       for i = 1, 3 do
         colCount = column - 1
+        
         for j = 1, 3 do
-          --compute reflected coordiantes
+          --compute reflected coordinates
           reflectedColumn, reflectedRow = help.reflection(colCount, rowCount, columns - 1, rows - 1)
+          
           sum = sum + mask[i][j] * img:at(reflectedRow, reflectedColumn).y
+          
           colCount = colCount + 1
         end
+        
         rowCount = rowCount + 1
       end
       
@@ -400,12 +404,11 @@ local function emboss(img)
         sum = 0
       end
       
-      cloneImg:at(row, column).y = math.floor(sum)
-      
+      cloneImg:at(row, column).y = sum
     end 
   end
-  return il.YIQ2RGB(cloneImg)
   
+  return il.YIQ2RGB(cloneImg)
 end
 
 -- Expose methods in order to call from main.lua

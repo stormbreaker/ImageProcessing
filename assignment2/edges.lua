@@ -245,6 +245,7 @@ local function kirschMagnitudeDirection(img)
   return il.YIQ2RGB(img), il.YIQ2RGB(imgClone), il.YIQ2RGB(imgDir)
 end
 
+-- Expose methods in order to call from main.lua
 return
 {
   laplacian = laplacian,
