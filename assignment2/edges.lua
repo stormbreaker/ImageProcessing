@@ -180,6 +180,8 @@ local function kirschMagnitudeDirection(img)
   local magnitudes = {}
   local directionalIntensity
   
+  local reflectedRow, reflectedColumn
+  
   imgClone = il.RGB2YIQ(imgClone)
   imgDir = il.RGB2YIQ(imgDir)
   img = il.RGB2YIQ(img)
@@ -198,7 +200,8 @@ local function kirschMagnitudeDirection(img)
         -- Calculate the magnitude of the current filter position
         for rowFilter = 1, 3 do
           for colFilter = 1, 3 do
-            calc = calc + filter[rowFilter][colFilter] * img:at(row + rowFilter-2, col + colFilter-2).y
+            reflectedColumn, reflectedRow = help.reflection(col + colFilter-2, row + rowFilter-2, columns - 1, rows - 1)
+            calc = calc + filter[rowFilter][colFilter] * img:at(reflectedRow, reflectedColumn).y
           end
         end
         
