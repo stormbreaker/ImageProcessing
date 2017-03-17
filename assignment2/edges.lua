@@ -68,10 +68,11 @@ end
   The value is then mapped from this value into the 0 to 255 range.  
   After this is done, clipping occurs and the value is returned. 
 ]]
-local function sobelEdge(img, isMagnitude)
+local function sobelEdge(img)
   local rows, columns = img.height, img.width
   
   local cloneImg = img:clone()
+  local dirImg = img:clone()
   
   --sobel masks
   local yMask = {{1, 2, 1}, {0 , 0, 0}, {-1, -2, -1}}
@@ -86,10 +87,12 @@ local function sobelEdge(img, isMagnitude)
   
   local rowCount = 0
   local columnCount = 0
-  local result = 0
+  local magResult = 0
+  local dirResult = 0
   
   img = il.RGB2YIQ(img)
   cloneImg = il.RGB2YIQ(cloneImg)
+  dirImg = il.RGB2YIQ(dirImg)
   
   --process the image
   for row = 0, rows - 1 do
@@ -115,55 +118,44 @@ local function sobelEdge(img, isMagnitude)
       end
       
       --compute magnitude
-      if isMagnitude then
-        result = math.sqrt((G_x * G_x) + (G_y * G_y))
+      magResult = math.sqrt((G_x * G_x) + (G_y * G_y))
+      
       --compute direction
-      else
-        result = math.atan2(G_y,G_x)
+      dirResult = math.atan2(G_y,G_x)
         --do recentering
-        if result < 0 then
-          result = result + 2 * math.pi
-        end
-        --scale
-        result = math.floor(256 * (result)/(2*math.pi))
+      if dirResult < 0 then
+        dirResult = dirResult + 2 * math.pi
       end
+      
+      --scale
+      dirResult = math.floor(256 * (dirResult)/(2*math.pi))
       
       --clip
-      if result > 255 then
-        result = 255
-      elseif result < 0 then
-        result = 0
+      if magResult > 255 then
+        magResult = 255
+      elseif magResult < 0 then
+        magResult = 0
       end
       
-      cloneImg:at(row, column).r = result
+      if dirResult > 255 then
+        dirResult = 255
+      elseif dirResult < 0 then
+        dirResult = 0
+      end
+      
+      cloneImg:at(row, column).r = magResult
       --grayscale stuff
       cloneImg:at(row, column).g = 128
       cloneImg:at(row, column).b = 128
       
+      dirImg:at(row, column).r = dirResult
+      --grayscale stuff
+      dirImg:at(row, column).g = 128
+      dirImg:at(row, column).b = 128
     end
   end
   
-  return il.YIQ2RGB(cloneImg)
-end
-
---[[
-Author: Benjamin Kaiser
-Description: This function is just a wrapper function for the sobelEdge function
-and it passes the image that it received along with a true flag indicating that the
-sobel edge function should return the magnitude.
-]]
-local function sobelMag(img)
-  return sobelEdge(img, true)
-end
-
- --[[
-Author: Benjamin Kaiser
-Description: This function is just a wrapper function for the sobelEdge function
-and it passes the image that it received along with a false flag indicating that the
-sobel edge function should return the direction
-]]
-local function sobelDirection(img)
-   return sobelEdge(img, false)
+  return il.YIQ2RGB(img), il.YIQ2RGB(cloneImg), il.YIQ2RGB(dirImg)
 end
 
 --[[
@@ -256,7 +248,6 @@ end
 return
 {
   laplacian = laplacian,
-  sobelMag = sobelMag,
-  sobelDir = sobelDirection,
+  sobelEdge = sobelEdge,
   kirschMagDir = kirschMagnitudeDirection
 }

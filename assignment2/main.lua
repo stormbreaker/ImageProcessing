@@ -41,8 +41,7 @@ imageMenu("Convenience Functions",
 imageMenu("Edge Detection", 
 {
   {"Kirsch Magnitude / Direction", edge.kirschMagDir},
-  {"Sobel Magnitude", edge.sobelMag},
-  {"Sobel Direction", edge.sobelDir},
+  {"Sobel Magnitude / Direction", edge.sobelEdge},
   {"Laplacian", edge.laplacian}
 })
 
