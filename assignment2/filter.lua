@@ -364,7 +364,7 @@ local function emboss(img)
   cloneImg = il.RGB2YIQ(cloneImg)
   
   --emboss mask
-  local mask = {{0, 0, 0}, {0, 2, 0}, {0, 0, -2}}
+  local mask = {{0, 0, 0}, {0, 1, 0}, {0, 0, -1}}
   
   --variables to handle reflection
   local reflectedRow = 0
